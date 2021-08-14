@@ -2,5 +2,8 @@
     <string name="app_name">Tumble</string>
     <string name="new_game">Start A New Game</string>
     <string name="scoreboard">My Scoreboard</string>
+    <string name="main_menu">Main Menu</string>
     <string name="exit_app">EXIT</string>
+    <string name="best_plays">BEST PLAYS</string>
+    <string name="default_score">-----</string>
 </resources>
