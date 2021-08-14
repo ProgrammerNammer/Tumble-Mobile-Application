@@ -1,3 +1,6 @@
 <resources>
     <string name="app_name">Tumble</string>
+    <string name="new_game">Start A New Game</string>
+    <string name="scoreboard">My Scoreboard</string>
+    <string name="exit_app">EXIT</string>
 </resources>
