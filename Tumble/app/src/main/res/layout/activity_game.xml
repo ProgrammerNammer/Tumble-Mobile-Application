@@ -2,20 +2,21 @@
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
     android:layout_height="match_parent"
-    android:layout_width="match_parent"
-    android:orientation="vertical" >
+    android:orientation="vertical">
 
     <LinearLayout
         android:id="@+id/linearLayoutCompat5"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingHorizontal="15dp"
-        android:paddingBottom="20dp"
-        android:background="@drawable/activity_game_top_background"
-        android:layout_alignParentTop="true"
         android:layout_above="@+id/constraint_layout"
-        android:orientation="vertical">
+        android:layout_alignParentTop="true"
+        android:background="@drawable/activity_game_top_background"
+        android:orientation="vertical"
+        android:paddingHorizontal="15dp"
+        android:paddingBottom="20dp">
 
         <TextView
             android:id="@+id/tv_total_score"
@@ -23,9 +24,9 @@
             android:layout_height="wrap_content"
             android:gravity="center"
             android:text="@string/total_score"
+            android:textAllCaps="true"
             android:textColor="@color/white"
             android:textSize="24pt"
-            android:textAllCaps="true"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -33,48 +34,182 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:weightSum="10"
             android:layout_marginTop="10dp"
-            android:layout_marginBottom="20dp">
+            android:layout_marginBottom="20dp"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:weightSum="10">
 
-            <ImageView
-                android:id="@+id/timer_side_1"
-                android:layout_width="0dp"
-                android:layout_height="50dp"
-                android:layout_weight="1"
-                android:src="@drawable/timer_side"
-                android:contentDescription="Timer Side" />
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight=".5">
 
-            <LinearLayout
-                android:id="@+id/timer_background"
-                android:layout_width="200dp"
-                android:layout_height="45dp"
-                android:background="#CDCDCD"
-                android:orientation="horizontal"
-                android:layout_weight="8"
-                android:layout_gravity="center">
+                <ProgressBar
+                    android:id="@+id/progressbar"
+                    style="@android:style/Widget.Material.ProgressBar.Horizontal"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight=".5"
+                    android:max="100"
+                    android:progress="0" />
 
-            </LinearLayout>
-
-            <ImageView
-                android:id="@+id/timer_side_2"
-                android:layout_width="0dp"
-                android:layout_height="50dp"
-                android:layout_weight="1"
-                android:src="@drawable/timer_side"
-                android:contentDescription="Timer Side"/>
+                <ProgressBar
+                    android:id="@+id/progressbar2"
+                    style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight=".5"
+                    android:max="100"
+                    android:progress="0"
+                    android:rotation="180" />
+            </TableRow>
 
         </LinearLayout>
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/constraint_layout2"
+        <RelativeLayout
+            android:id="@+id/RelativeLayout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_below="@id/linearLayoutCompat5"
-            android:background="@drawable/game_board" >
+            android:background="@drawable/game_board">
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
+            <ImageView
+                android:id="@+id/imageView26"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+
+            <TableLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center">
+
+
+                <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center">
+
+                    <ImageView
+                        android:id="@+id/row1col1"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/cell" />
+
+                    <ImageView
+                        android:id="@+id/row1col2"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/cell" />
+
+                    <ImageView
+                        android:id="@+id/row1col3"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/cell" />
+
+                    <ImageView
+                        android:id="@+id/row1col4"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/cell" />
+
+                </TableRow>
+
+                <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center">
+
+                    <ImageView
+                        android:id="@+id/row2col1"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/cell" />
+
+                    <ImageView
+                        android:id="@+id/row2col2"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/cell" />
+
+                    <ImageView
+                        android:id="@+id/row2col3"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/cell" />
+
+                    <ImageView
+                        android:id="@+id/row2col4"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/cell" />
+
+                </TableRow>
+
+                <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center">
+
+                    <ImageView
+                        android:id="@+id/row3col1"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/cell" />
+
+                    <ImageView
+                        android:id="@+id/row3col2"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/cell" />
+
+                    <ImageView
+                        android:id="@+id/row3col3"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/cell" />
+
+                    <ImageView
+                        android:id="@+id/row3col4"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/cell" />
+
+                </TableRow>
+
+                <TableRow
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center">
+
+                    <ImageView
+                        android:id="@+id/row4col1"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/cell" />
+
+                    <ImageView
+                        android:id="@+id/row4col2"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/cell" />
+
+                    <ImageView
+                        android:id="@+id/row4col3"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/cell" />
+
+                    <ImageView
+                        android:id="@+id/row4col4"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/cell" />
+
+                </TableRow>
+            </TableLayout>
+        </RelativeLayout>
 
     </LinearLayout>
 
@@ -82,9 +217,9 @@
         android:id="@+id/constraint_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_above="@id/linearLayoutCompat4"
         android:background="@drawable/activity_game_middle_background"
-        android:padding="25dp"
-        android:layout_above="@id/linearLayoutCompat4">
+        android:padding="25dp">
 
         <TextView
             android:id="@+id/tv_word_formed"
@@ -92,9 +227,9 @@
             android:layout_height="wrap_content"
             android:gravity="center"
             android:text="@string/word_formed"
+            android:textAllCaps="true"
             android:textColor="@color/white"
             android:textSize="18pt"
-            android:textAllCaps="true"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -115,12 +250,12 @@
         android:id="@+id/linearLayoutCompat4"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
         android:layout_alignParentBottom="true"
+        android:background="@drawable/activity_game_bottom_background"
         android:gravity="bottom"
+        android:orientation="horizontal"
         android:padding="10dp"
-        android:weightSum="2"
-        android:background="@drawable/activity_game_bottom_background">
+        android:weightSum="2">
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/AppCompatButton"
