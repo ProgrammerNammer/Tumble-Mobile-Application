@@ -11,13 +11,11 @@ import androidx.recyclerview.widget.RecyclerView;
 
 public class ViewHolder extends RecyclerView.ViewHolder {
     private TextView tv_score;
-    private ConstraintLayout cl_background;
 
     public ViewHolder(View view) {
         super(view);
 
         this.tv_score = view.findViewById(R.id.tv_score);
-        this.cl_background = view.findViewById(R.id.cl_background);
     }
 
     @SuppressLint("SetTextI18n")

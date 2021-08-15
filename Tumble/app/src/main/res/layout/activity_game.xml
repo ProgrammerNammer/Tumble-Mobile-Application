@@ -2,21 +2,20 @@
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="wrap_content"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:layout_width="match_parent"
+    android:orientation="vertical" >
 
     <LinearLayout
         android:id="@+id/linearLayoutCompat5"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/constraint_layout"
-        android:layout_alignParentTop="true"
-        android:background="@drawable/activity_game_top_background"
-        android:orientation="vertical"
         android:paddingHorizontal="15dp"
-        android:paddingBottom="20dp">
+        android:paddingBottom="20dp"
+        android:background="@drawable/activity_game_top_background"
+        android:layout_alignParentTop="true"
+        android:layout_above="@+id/constraint_layout"
+        android:orientation="vertical">
 
         <TextView
             android:id="@+id/tv_total_score"
@@ -24,12 +23,9 @@
             android:layout_height="wrap_content"
             android:gravity="center"
             android:text="@string/total_score"
-            android:textAllCaps="true"
             android:textColor="@color/white"
             android:textSize="24pt"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            android:textAllCaps="true" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -217,9 +213,9 @@
         android:id="@+id/constraint_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_above="@id/linearLayoutCompat4"
         android:background="@drawable/activity_game_middle_background"
-        android:padding="25dp">
+        android:padding="25dp"
+        android:layout_above="@id/linearLayoutCompat4">
 
         <TextView
             android:id="@+id/tv_word_formed"
@@ -227,9 +223,9 @@
             android:layout_height="wrap_content"
             android:gravity="center"
             android:text="@string/word_formed"
-            android:textAllCaps="true"
             android:textColor="@color/white"
             android:textSize="18pt"
+            android:textAllCaps="true"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -250,12 +246,12 @@
         android:id="@+id/linearLayoutCompat4"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:background="@drawable/activity_game_bottom_background"
-        android:gravity="bottom"
         android:orientation="horizontal"
+        android:layout_alignParentBottom="true"
+        android:gravity="bottom"
         android:padding="10dp"
-        android:weightSum="2">
+        android:weightSum="2"
+        android:background="@drawable/activity_game_bottom_background">
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/AppCompatButton"

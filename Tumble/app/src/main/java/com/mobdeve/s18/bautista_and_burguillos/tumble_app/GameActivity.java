@@ -16,6 +16,7 @@ public class GameActivity extends AppCompatActivity {
     private ProgressBar mProgressBar2;
     private CountDownTimer mCountDownTimer;
     private int i = 0;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -31,9 +32,6 @@ public class GameActivity extends AppCompatActivity {
                 startActivity(i);
             }
         });
-
-
-
 
         mProgressBar=(ProgressBar)findViewById(R.id.progressbar);
         mProgressBar2=(ProgressBar)findViewById(R.id.progressbar2);
@@ -58,6 +56,7 @@ public class GameActivity extends AppCompatActivity {
             }
 
         };
+
         mCountDownTimer.start();
     }
 }

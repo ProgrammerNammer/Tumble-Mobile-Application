@@ -14,7 +14,6 @@ import java.util.Arrays;
 import java.util.Collections;
 
 public class ScoreboardActivity extends AppCompatActivity {
-
     private RecyclerView recyclerView;
     private ViewAdapter viewAdapter;
     private RecyclerView.LayoutManager layoutManager;
