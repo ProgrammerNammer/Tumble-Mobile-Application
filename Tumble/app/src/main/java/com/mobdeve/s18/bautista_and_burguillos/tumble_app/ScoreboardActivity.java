@@ -1,6 +1,9 @@
 package com.mobdeve.s18.bautista_and_burguillos.tumble_app;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -15,12 +18,12 @@ public class ScoreboardActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
     private ViewAdapter viewAdapter;
     private RecyclerView.LayoutManager layoutManager;
-
+    private Button main_menu;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_scoreboard);
-
+        main_menu = findViewById(R.id.appCompatButton3);
         recyclerView = findViewById(R.id.recycler_area);
         layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
@@ -29,6 +32,13 @@ public class ScoreboardActivity extends AppCompatActivity {
 
         viewAdapter = new ViewAdapter(scoreboardItems);
         recyclerView.setAdapter(viewAdapter);
+        this.main_menu.setOnClickListener(new View.OnClickListener() {
+            @Override
+
+            public void onClick(View view){
+                finish();
+            }
+        });
     }
 
     private ArrayList<ScoreboardItem> getScoreboard() {
