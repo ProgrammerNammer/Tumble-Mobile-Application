@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_height="match_parent"
+    android:layout_width="match_parent"
+    android:orientation="vertical" >
+
+    <LinearLayout
+        android:id="@+id/linearLayoutCompat5"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingHorizontal="15dp"
+        android:paddingBottom="20dp"
+        android:background="@drawable/activity_game_top_background"
+        android:layout_alignParentTop="true"
+        android:layout_above="@+id/constraint_layout"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/tv_total_score"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="@string/total_score"
+            android:textColor="@color/white"
+            android:textSize="24pt"
+            android:textAllCaps="true"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:weightSum="10"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="20dp">
+
+            <ImageView
+                android:id="@+id/timer_side_1"
+                android:layout_width="0dp"
+                android:layout_height="50dp"
+                android:layout_weight="1"
+                android:src="@drawable/timer_side"
+                android:contentDescription="Timer Side" />
+
+            <LinearLayout
+                android:id="@+id/timer_background"
+                android:layout_width="200dp"
+                android:layout_height="45dp"
+                android:background="#CDCDCD"
+                android:orientation="horizontal"
+                android:layout_weight="8"
+                android:layout_gravity="center">
+
+            </LinearLayout>
+
+            <ImageView
+                android:id="@+id/timer_side_2"
+                android:layout_width="0dp"
+                android:layout_height="50dp"
+                android:layout_weight="1"
+                android:src="@drawable/timer_side"
+                android:contentDescription="Timer Side"/>
+
+        </LinearLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/constraint_layout2"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@id/linearLayoutCompat5"
+            android:background="@drawable/game_board" >
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </LinearLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/constraint_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/activity_game_middle_background"
+        android:padding="25dp"
+        android:layout_above="@id/linearLayoutCompat4">
+
+        <TextView
+            android:id="@+id/tv_word_formed"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="@string/word_formed"
+            android:textColor="@color/white"
+            android:textSize="18pt"
+            android:textAllCaps="true"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/tv_score_formed"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="@string/score_of_word_formed"
+            android:textColor="@color/white"
+            android:textSize="10pt"
+            app:layout_constraintTop_toBottomOf="@+id/tv_word_formed" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <LinearLayout
+        android:id="@+id/linearLayoutCompat4"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_alignParentBottom="true"
+        android:gravity="bottom"
+        android:padding="10dp"
+        android:weightSum="2"
+        android:background="@drawable/activity_game_bottom_background">
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@drawable/button_white_logic"
+            android:fontFamily="@font/lato"
+            android:paddingTop="15dp"
+            android:paddingBottom="25dp"
+            android:text="@string/new_game"
+            android:textAllCaps="false"
+            android:textFontWeight="600"
+            android:textSize="10pt" />
+
+    </LinearLayout>
+
+</RelativeLayout>

@@ -10,7 +10,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Tumble" >
 
-        <activity   android:name=".ScoreboardActivity"
+        <activity   android:name=".GameActivity"
                     android:screenOrientation="portrait"
                     android:theme="@style/Theme.AppCompat.DayNight.NoActionBar" >
             <intent-filter>

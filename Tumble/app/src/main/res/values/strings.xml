@@ -6,4 +6,7 @@
     <string name="exit_app">EXIT</string>
     <string name="best_plays">BEST PLAYS</string>
     <string name="default_score">-----</string>
+    <string name="word_formed">{Word Here}</string>
+    <string name="score_of_word_formed">{+Score Here}</string>
+    <string name="total_score">{Total}</string>
 </resources>
