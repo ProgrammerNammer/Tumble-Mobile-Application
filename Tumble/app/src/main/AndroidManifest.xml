@@ -10,7 +10,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Tumble" >
 
-        <activity   android:name=".GameActivity"
+        <activity   android:name=".MainActivity"
                     android:screenOrientation="portrait"
                     android:theme="@style/Theme.AppCompat.DayNight.NoActionBar" >
             <intent-filter>
@@ -19,7 +19,16 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity   android:name=".GameActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.AppCompat.DayNight.NoActionBar" >
 
+        </activity>
+        <activity   android:name=".ScoreboardActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.AppCompat.DayNight.NoActionBar" >
+
+        </activity>
     </application>
 
 </manifest>

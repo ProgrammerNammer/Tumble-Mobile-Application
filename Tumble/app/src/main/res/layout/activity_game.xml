@@ -123,6 +123,7 @@
         android:background="@drawable/activity_game_bottom_background">
 
         <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/AppCompatButton"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1"
