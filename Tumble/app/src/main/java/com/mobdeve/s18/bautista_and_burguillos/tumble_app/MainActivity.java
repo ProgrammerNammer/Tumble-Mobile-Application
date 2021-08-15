@@ -24,7 +24,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         new_game = findViewById(R.id.appCompatButton3);
         my_leaderboard = findViewById(R.id.appCompatButton4);
-        exit = findViewById(R.id.exitButton);
+        exitButton = findViewById(R.id.exitButton);
         this.new_game.setOnClickListener(new View.OnClickListener() {
             @Override
 
