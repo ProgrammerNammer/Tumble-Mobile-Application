@@ -18,6 +18,7 @@ public class MainActivity extends AppCompatActivity {
     private Button new_game;
     private Button my_leaderboard;
     private Button exitButton;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

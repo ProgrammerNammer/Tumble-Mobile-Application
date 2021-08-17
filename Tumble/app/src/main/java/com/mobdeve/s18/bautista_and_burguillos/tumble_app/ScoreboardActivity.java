@@ -18,10 +18,12 @@ public class ScoreboardActivity extends AppCompatActivity {
     private ViewAdapter viewAdapter;
     private RecyclerView.LayoutManager layoutManager;
     private Button main_menu;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_scoreboard);
+
         main_menu = findViewById(R.id.appCompatButton3);
         recyclerView = findViewById(R.id.recycler_area);
         layoutManager = new LinearLayoutManager(this);

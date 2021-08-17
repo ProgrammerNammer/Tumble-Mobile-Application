@@ -63,149 +63,19 @@
 
         </LinearLayout>
 
-        <RelativeLayout
-            android:id="@+id/RelativeLayout"
+        <TableLayout
+            android:id="@+id/tl_game_grid"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_below="@id/linearLayoutCompat5"
-            android:background="@drawable/game_board">
+            android:gravity="center"
+            android:padding="10dp"
+            android:foregroundGravity="center"
+            android:weightSum="5"
+            android:background="@drawable/game_board" >
 
-            <ImageView
-                android:id="@+id/imageView26"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent" />
+            <!-- Game data here is injected `programtically` on app run -->
 
-            <TableLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:gravity="center">
-
-
-                <TableRow
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:gravity="center">
-
-                    <ImageView
-                        android:id="@+id/row1col1"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:src="@drawable/cell" />
-
-                    <ImageView
-                        android:id="@+id/row1col2"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:src="@drawable/cell" />
-
-                    <ImageView
-                        android:id="@+id/row1col3"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:src="@drawable/cell" />
-
-                    <ImageView
-                        android:id="@+id/row1col4"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:src="@drawable/cell" />
-
-                </TableRow>
-
-                <TableRow
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:gravity="center">
-
-                    <ImageView
-                        android:id="@+id/row2col1"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:src="@drawable/cell" />
-
-                    <ImageView
-                        android:id="@+id/row2col2"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:src="@drawable/cell" />
-
-                    <ImageView
-                        android:id="@+id/row2col3"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:src="@drawable/cell" />
-
-                    <ImageView
-                        android:id="@+id/row2col4"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:src="@drawable/cell" />
-
-                </TableRow>
-
-                <TableRow
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:gravity="center">
-
-                    <ImageView
-                        android:id="@+id/row3col1"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:src="@drawable/cell" />
-
-                    <ImageView
-                        android:id="@+id/row3col2"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:src="@drawable/cell" />
-
-                    <ImageView
-                        android:id="@+id/row3col3"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:src="@drawable/cell" />
-
-                    <ImageView
-                        android:id="@+id/row3col4"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:src="@drawable/cell" />
-
-                </TableRow>
-
-                <TableRow
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:gravity="center">
-
-                    <ImageView
-                        android:id="@+id/row4col1"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:src="@drawable/cell" />
-
-                    <ImageView
-                        android:id="@+id/row4col2"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:src="@drawable/cell" />
-
-                    <ImageView
-                        android:id="@+id/row4col3"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:src="@drawable/cell" />
-
-                    <ImageView
-                        android:id="@+id/row4col4"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:src="@drawable/cell" />
-
-                </TableRow>
-            </TableLayout>
-        </RelativeLayout>
+        </TableLayout>
 
     </LinearLayout>
 
