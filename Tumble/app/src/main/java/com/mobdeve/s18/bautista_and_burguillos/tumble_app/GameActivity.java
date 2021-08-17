@@ -2,6 +2,7 @@ package com.mobdeve.s18.bautista_and_burguillos.tumble_app;
 
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.media.Image;
 import android.os.Bundle;
 import android.os.CountDownTimer;
@@ -19,12 +20,14 @@ import android.widget.TableRow;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.content.res.AppCompatResources;
+import androidx.core.content.res.ResourcesCompat;
 
 import java.util.ArrayList;
 import java.util.Random;
 
 public class GameActivity extends AppCompatActivity {
-    private final int DIMENSIONS = 5;
+    private final int DIMENSIONS = 4;
     private Button btn_new_game;
     private ProgressBar pb_progressbar_1;
     private ProgressBar pb_progressbar_2;
@@ -66,11 +69,16 @@ public class GameActivity extends AppCompatActivity {
         pb_progressbar_2 =(ProgressBar)findViewById(R.id.progressbar2);
         pb_progressbar_1.setProgress(i);
         pb_progressbar_2.setProgress(i);
+
+        //  Load the custom progress bar
+        Drawable drawable = AppCompatResources.getDrawable(this, R.drawable.custom_timer);
+        pb_progressbar_1.setProgressDrawable(drawable);
+
         cdt_timer =new CountDownTimer(180000,1000) {
 
             @Override
             public void onTick(long millisUntilFinished) {
-                Log.v("Log_tag", "Tick of Progress"+ i+ millisUntilFinished);
+                Log.v("Time", "Tick of Progress"+ i+ millisUntilFinished);
                 i++;
                 pb_progressbar_1.setProgress((int)i*100/(180000/1000));
                 pb_progressbar_2.setProgress((int)i*100/(180000/1000));
@@ -127,26 +135,23 @@ public class GameActivity extends AppCompatActivity {
             for (int column = 0; column < letterDiceGrid.size(); column++) {
                 LetterDie letterDie = letterDiceGrid.get(row).get(column);
                 View view = getLayoutInflater().inflate(R.layout.letter_die_item, tableRow, false);
-//                View divider = getLayoutInflater().inflate(R.layout.divider, tableRow, false);
                 TextView letter = view.findViewById(R.id.tv_die_letter);
 
                 letter.setText(Character.toString(letterDie.getMyLetter()));
 
+                //  Set the universal attributes of each letter die in the baord
                 view.post(
                         new Runnable() {
                             @Override
                             public void run() {
-                                TableRow.LayoutParams layoutParams = new TableRow.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT, 1f);
-                                layoutParams.setMargins(20, 0, 20, 0);
+                                TableRow.LayoutParams layoutParams = new TableRow.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.MATCH_PARENT, 1f);
+                                layoutParams.setMargins(30, 30, 30, 30);
                                 view.setLayoutParams(layoutParams);
                             }
                         }
                 );
 
                 tableRow.addView(view);
-//                if (column < letterDiceGrid.size() - 1) {
-//                    tableRow.addView(divider);
-//                }
             }
 
             tl_game_grid.addView(tableRow, row);
