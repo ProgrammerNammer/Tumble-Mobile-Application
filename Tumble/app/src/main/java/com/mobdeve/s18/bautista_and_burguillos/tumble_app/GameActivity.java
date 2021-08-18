@@ -11,6 +11,7 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -22,6 +23,7 @@ import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.content.res.AppCompatResources;
 import androidx.core.content.res.ResourcesCompat;
+import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 import java.util.Random;
@@ -37,6 +39,7 @@ public class GameActivity extends AppCompatActivity {
     private ArrayList<ArrayList<LetterDie>> letterDiceGrid;
     private TableLayout tl_game_grid;
 
+    //  TODO: Cleanup, progress bar still going even after finish
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -78,7 +81,7 @@ public class GameActivity extends AppCompatActivity {
 
             @Override
             public void onTick(long millisUntilFinished) {
-                Log.v("Time", "Tick of Progress"+ i+ millisUntilFinished);
+                // Log.v("Time", "Tick of Progress"+ i+ millisUntilFinished);
                 i++;
                 pb_progressbar_1.setProgress((int)i*100/(180000/1000));
                 pb_progressbar_2.setProgress((int)i*100/(180000/1000));
@@ -118,7 +121,8 @@ public class GameActivity extends AppCompatActivity {
 
         //  Now, render the board
         for (int row = 0; row < letterDiceGrid.size(); row++) {
-            TableRow tableRow = new TableRow(this);
+            LetterDieAdapter letterDieAdapter = new LetterDieAdapter(this, letterDiceGrid.get(row));
+            LinearLayout tableRow = new LinearLayout(this);
 
             tableRow.post(
                     new Runnable() {
@@ -133,13 +137,16 @@ public class GameActivity extends AppCompatActivity {
             );
 
             for (int column = 0; column < letterDiceGrid.size(); column++) {
-                LetterDie letterDie = letterDiceGrid.get(row).get(column);
-                View view = getLayoutInflater().inflate(R.layout.letter_die_item, tableRow, false);
-                TextView letter = view.findViewById(R.id.tv_die_letter);
+                View view = letterDieAdapter.getView(column, null, tl_game_grid);
+//                LetterDie letterDie = letterDiceGrid.get(row).get(column);
+//                View view = getLayoutInflater().inflate(R.layout.letter_die_item, tableRow, false);
+//
+//                view.setTag("tile_row_" + (row + 1) + "_column_" + (column + 1));
+//
+//                TextView letter = view.findViewById(R.id.tv_die_letter);
+//                letter.setText(Character.toString(letterDie.getMyLetter()));
 
-                letter.setText(Character.toString(letterDie.getMyLetter()));
-
-                //  Set the universal attributes of each letter die in the baord
+                //  Set the universal attributes of each letter die in the board
                 view.post(
                         new Runnable() {
                             @Override
@@ -154,7 +161,7 @@ public class GameActivity extends AppCompatActivity {
                 tableRow.addView(view);
             }
 
-            tl_game_grid.addView(tableRow, row);
+            tl_game_grid.addView(tableRow);
         }
     }
 }

@@ -26,7 +26,8 @@ public class MainActivity extends AppCompatActivity {
         new_game = findViewById(R.id.appCompatButton3);
         my_leaderboard = findViewById(R.id.appCompatButton4);
         exitButton = findViewById(R.id.exitButton);
-        this.new_game.setOnClickListener(new View.OnClickListener() {
+
+        new_game.setOnClickListener(new View.OnClickListener() {
             @Override
 
             public void onClick(View view){
@@ -34,7 +35,8 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(i);
             }
         });
-        this.my_leaderboard.setOnClickListener(new View.OnClickListener() {
+
+        my_leaderboard.setOnClickListener(new View.OnClickListener() {
             @Override
 
             public void onClick(View view){
@@ -42,7 +44,8 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(i);
             }
         });
-        this.exitButton.setOnClickListener(new View.OnClickListener() {
+
+        exitButton.setOnClickListener(new View.OnClickListener() {
             @Override
 
             public void onClick(View view){

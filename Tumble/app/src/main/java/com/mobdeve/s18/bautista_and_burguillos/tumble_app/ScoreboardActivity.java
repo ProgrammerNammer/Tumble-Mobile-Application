@@ -1,6 +1,5 @@
 package com.mobdeve.s18.bautista_and_burguillos.tumble_app;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -15,7 +14,7 @@ import java.util.Collections;
 
 public class ScoreboardActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
-    private ViewAdapter viewAdapter;
+    private ScoreboardViewAdapter scoreboardViewAdapter;
     private RecyclerView.LayoutManager layoutManager;
     private Button main_menu;
 
@@ -31,9 +30,10 @@ public class ScoreboardActivity extends AppCompatActivity {
 
         ArrayList<ScoreboardItem> scoreboardItems = getScoreboard();
 
-        viewAdapter = new ViewAdapter(scoreboardItems);
-        recyclerView.setAdapter(viewAdapter);
-        this.main_menu.setOnClickListener(new View.OnClickListener() {
+        scoreboardViewAdapter = new ScoreboardViewAdapter(scoreboardItems);
+        recyclerView.setAdapter(scoreboardViewAdapter);
+
+        main_menu.setOnClickListener(new View.OnClickListener() {
             @Override
 
             public void onClick(View view){

@@ -9,16 +9,15 @@ import android.widget.TextView;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
-public class ViewHolder extends RecyclerView.ViewHolder {
+public class ScoreboardViewHolder extends RecyclerView.ViewHolder {
     private TextView tv_score;
 
-    public ViewHolder(View view) {
+    public ScoreboardViewHolder(View view) {
         super(view);
 
         this.tv_score = view.findViewById(R.id.tv_score);
     }
 
-    @SuppressLint("SetTextI18n")
     public void setTv_score(int tv_score) {
         this.tv_score.setText(Integer.toString(tv_score));
     }
