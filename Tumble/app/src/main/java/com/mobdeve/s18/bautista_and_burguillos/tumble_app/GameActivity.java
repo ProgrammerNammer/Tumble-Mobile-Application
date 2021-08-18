@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.media.Image;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.util.Log;
@@ -23,8 +24,14 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.content.res.AppCompatResources;
 import androidx.core.content.res.ResourcesCompat;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Random;
+
+import javax.net.ssl.HttpsURLConnection;
+
 
 public class GameActivity extends AppCompatActivity {
     private final int DIMENSIONS = 4;
@@ -155,6 +162,44 @@ public class GameActivity extends AppCompatActivity {
             }
 
             tl_game_grid.addView(tableRow, row);
+        }
+    }
+    /*
+    to check if a word is a word call  "new CallBackTask().execute(inflections(insertwordhere)) ";
+    callback returns a string "404" if it didn't find the word in the dictionary but if it does find a word it prints to log a String
+    in JSON format that contains the word, the word's definition, and info about the word;
+    */
+
+    private String inflections(String s){
+        final String url = "https://api.dictionaryapi.dev/api/v2/entries/en/";
+        final String word = s;
+        return url+word;
+    }
+
+    private class CallBackTask extends AsyncTask<String,Integer,String> {
+        @Override
+        protected String doInBackground(String... params) {
+            try {
+                URL url = new URL(params[0]);
+                HttpsURLConnection urlConnection = (HttpsURLConnection) url.openConnection();
+                urlConnection.setRequestProperty("Accept", "application/json");
+                BufferedReader reader = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
+                StringBuilder stringBuilder = new StringBuilder();
+                String line = null;
+                while((line = reader.readLine()) != null){
+                    stringBuilder.append(line+ "\n");
+                }
+                return stringBuilder.toString();
+            }catch(Exception e){
+                e.printStackTrace();
+                return "404";
+            }
+
+        }
+        @Override
+        protected void onPostExecute(String result){
+            super.onPostExecute(result);
+            System.out.println("onPostExecute: " + result);
         }
     }
 }
