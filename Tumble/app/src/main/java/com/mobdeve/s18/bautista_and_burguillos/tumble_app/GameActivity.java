@@ -167,6 +167,12 @@ public class GameActivity extends AppCompatActivity implements LetterDieAdapter.
     //  Returns whether or not tiles are neighbors
     @Override
     public boolean handleTileClick(LetterDie letterDie, char letterTile) {
+        for (LetterDie pressedDie : currentWord) {
+            if (pressedDie.equals(letterDie)) {
+                return false;
+            }
+        }
+
         if (currentWord.size() == 0) {
             String stringLetterTile = Character.toString(letterTile);
             String currentWordText = tv_word_formed.getText().toString();
