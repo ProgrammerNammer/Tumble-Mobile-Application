@@ -37,7 +37,6 @@ public class GameActivity extends AppCompatActivity implements LetterDieAdapter.
     private TextView tv_word_formed;
 
     private ArrayList<ArrayList<LetterDie>> letterDiceGrid;
-    private ArrayList<LetterDie> currentWord;
     private Player player;
     private int progress;
 
@@ -59,7 +58,6 @@ public class GameActivity extends AppCompatActivity implements LetterDieAdapter.
         tv_word_formed = (TextView) findViewById(R.id.tv_word_formed);
         tl_game_grid = findViewById(R.id.tl_game_grid);
 
-        currentWord = new ArrayList<>();
         letterDiceGrid = new ArrayList<>();
         player = new Player();
 
@@ -167,34 +165,28 @@ public class GameActivity extends AppCompatActivity implements LetterDieAdapter.
     //  Returns whether or not tiles are neighbors
     @Override
     public boolean handleTileClick(LetterDie letterDie, char letterTile) {
-        for (LetterDie pressedDie : currentWord) {
-            if (pressedDie.equals(letterDie)) {
-                return false;
-            }
+        String stringLetterTile = Character.toString(letterTile);
+        String currentWordText = tv_word_formed.getText().toString();
+
+        if (player.isThisTileAlreadySelected(letterDie)) {
+            return false;
         }
 
-        if (currentWord.size() == 0) {
-            String stringLetterTile = Character.toString(letterTile);
-            String currentWordText = tv_word_formed.getText().toString();
-
+        if (player.isEmptyDiceCurrentlySelected()) {
             currentWordText += stringLetterTile;
             tv_word_formed.setText(currentWordText);
 
-            currentWord.add(letterDie);
+            player.pushDiceCurrentlySelected(letterDie);
 
             return true;
         } else {
-            LetterDie lastLetterDie = currentWord.get(currentWord.size() - 1);
-            boolean isValidNeighbor = lastLetterDie.isThisTileMyNeighbor(letterDie);
+            LetterDie lastLetterDie = player.peekDiceCurrentlySelected();
 
-            if (isValidNeighbor) {
-                String stringLetterTile = Character.toString(letterTile);
-                String currentWordText = tv_word_formed.getText().toString();
-
+            if (lastLetterDie.isThisTileMyNeighbor(letterDie)) {
                 currentWordText += stringLetterTile;
                 tv_word_formed.setText(currentWordText);
 
-                currentWord.add(letterDie);
+                player.pushDiceCurrentlySelected(letterDie);
 
                 return true;
             } else {
