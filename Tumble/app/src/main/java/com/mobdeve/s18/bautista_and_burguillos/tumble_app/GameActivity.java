@@ -37,6 +37,7 @@ public class GameActivity extends AppCompatActivity implements LetterDieAdapter.
     private TextView tv_word_formed;
 
     private ArrayList<ArrayList<LetterDie>> letterDiceGrid;
+    private ArrayList<LetterDie> currentWord;
     private Player player;
     private int progress;
 
@@ -46,32 +47,21 @@ public class GameActivity extends AppCompatActivity implements LetterDieAdapter.
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game);
 
-        initActivity();
+        init();
         initTimer();
         generateGameBoard();
+
         cdt_timer.start();
     }
 
-    //  TODO: Documentation
-    //  Returns whether or not tiles are neighbors
-    @Override
-    public boolean handleTileClick(int row, int column, char letterTile) {
-        String stringLetterTile = Character.toString(letterTile);
-        String currentWord = tv_word_formed.getText().toString();
-
-        currentWord += stringLetterTile;
-        tv_word_formed.setText(currentWord);
-
-        return true;
-    }
-
-    private void initActivity() {
+    private void init() {
         btn_new_game = findViewById(R.id.AppCompatButton);
         tv_word_formed = (TextView) findViewById(R.id.tv_word_formed);
         tl_game_grid = findViewById(R.id.tl_game_grid);
 
-        player = new Player();
+        currentWord = new ArrayList<>();
         letterDiceGrid = new ArrayList<>();
+        player = new Player();
 
         this.btn_new_game.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -170,6 +160,40 @@ public class GameActivity extends AppCompatActivity implements LetterDieAdapter.
             }
 
             tl_game_grid.addView(tableRow);
+        }
+    }
+
+    //  TODO: Documentation
+    //  Returns whether or not tiles are neighbors
+    @Override
+    public boolean handleTileClick(LetterDie letterDie, char letterTile) {
+        if (currentWord.size() == 0) {
+            String stringLetterTile = Character.toString(letterTile);
+            String currentWordText = tv_word_formed.getText().toString();
+
+            currentWordText += stringLetterTile;
+            tv_word_formed.setText(currentWordText);
+
+            currentWord.add(letterDie);
+
+            return true;
+        } else {
+            LetterDie lastLetterDie = currentWord.get(currentWord.size() - 1);
+            boolean isValidNeighbor = lastLetterDie.isThisTileMyNeighbor(letterDie);
+
+            if (isValidNeighbor) {
+                String stringLetterTile = Character.toString(letterTile);
+                String currentWordText = tv_word_formed.getText().toString();
+
+                currentWordText += stringLetterTile;
+                tv_word_formed.setText(currentWordText);
+
+                currentWord.add(letterDie);
+
+                return true;
+            } else {
+                return false;
+            }
         }
     }
 

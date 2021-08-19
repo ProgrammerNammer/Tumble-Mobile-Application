@@ -17,7 +17,18 @@ public class LetterDie {
     }
 
     public boolean isThisTileMyNeighbor(LetterDie letterDie) {
-        return true;
+        final int letterDieRow = letterDie.getRow();
+        final int letterColumnRow = letterDie.getColumn();
+
+        return (row == letterDieRow + 1 && column == letterColumnRow - 1) ||
+                (row == letterDieRow + 1 && column == letterColumnRow) ||
+                (row == letterDieRow + 1 && column == letterColumnRow + 1) ||
+                (row == letterDieRow && column == letterColumnRow - 1) ||
+                (row == letterDieRow && column == letterColumnRow) ||
+                (row == letterDieRow && column == letterColumnRow + 1) ||
+                (row == letterDieRow - 1 && column == letterColumnRow - 1) ||
+                (row == letterDieRow - 1 && column == letterColumnRow) ||
+                (row == letterDieRow - 1 && column == letterColumnRow + 1);
     }
 
     public boolean isFocusedOn() {

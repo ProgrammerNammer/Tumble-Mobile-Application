@@ -16,7 +16,7 @@ public class LetterDieAdapter extends ArrayAdapter<LetterDie> {
     private final ArrayList<LetterDie> letterDieRow;
 
     public interface IHandleTouchEvent {
-        boolean handleTileClick(int row, int column, char letterTile);
+        boolean handleTileClick(LetterDie letterDie, char letterTile);
     }
 
     private final IHandleTouchEvent handleCallBack;
@@ -46,15 +46,17 @@ public class LetterDieAdapter extends ArrayAdapter<LetterDie> {
             viewHolder.cl_letter_tile.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    letterDie.toggleIsFocusedOn();
+                    boolean isValidNeighbor = handleCallBack.handleTileClick(letterDie, letterDie.getMyLetter());
 
-                    if (letterDie.isFocusedOn()) {
-                        viewHolder.cl_letter_tile.setBackgroundResource(R.drawable.letter_die_activated);
-                    } else {
-                        viewHolder.cl_letter_tile.setBackgroundResource(R.drawable.letter_die);
+                    if (isValidNeighbor) {
+                        letterDie.toggleIsFocusedOn();
+
+                        if (letterDie.isFocusedOn()) {
+                            viewHolder.cl_letter_tile.setBackgroundResource(R.drawable.letter_die_activated);
+                        } else {
+                            viewHolder.cl_letter_tile.setBackgroundResource(R.drawable.letter_die);
+                        }
                     }
-
-                    handleCallBack.handleTileClick(letterDie.getRow(), letterDie.getColumn(), letterDie.getMyLetter());
                 }
             });
 
