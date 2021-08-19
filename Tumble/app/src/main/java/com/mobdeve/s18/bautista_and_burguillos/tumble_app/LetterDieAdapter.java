@@ -1,7 +1,6 @@
 package com.mobdeve.s18.bautista_and_burguillos.tumble_app;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,19 +8,23 @@ import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.content.res.AppCompatResources;
 import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.core.content.ContextCompat;
-import androidx.core.content.res.ResourcesCompat;
 
 import java.util.ArrayList;
 
 public class LetterDieAdapter extends ArrayAdapter<LetterDie> {
-    private ArrayList<LetterDie> letterDieRow;
+    private final ArrayList<LetterDie> letterDieRow;
 
-    public LetterDieAdapter (Context context, ArrayList<LetterDie> letterDieRow) {
+    public interface IHandleTouchEvent {
+        boolean handleTileClick(int row, int column, char letterTile);
+    }
+
+    private final IHandleTouchEvent handleCallBack;
+
+    public LetterDieAdapter (Context context, ArrayList<LetterDie> letterDieRow, IHandleTouchEvent handleCallBack) {
         super(context, 0, letterDieRow);
 
+        this.handleCallBack = handleCallBack;
         this.letterDieRow = letterDieRow;
     }
 
@@ -45,14 +48,13 @@ public class LetterDieAdapter extends ArrayAdapter<LetterDie> {
                 public void onClick(View v) {
                     letterDie.toggleIsFocusedOn();
 
-                    Log.d("MyTag", Character.toString(letterDie.getMyLetter()));
-
-                    //
                     if (letterDie.isFocusedOn()) {
                         viewHolder.cl_letter_tile.setBackgroundResource(R.drawable.letter_die_activated);
                     } else {
                         viewHolder.cl_letter_tile.setBackgroundResource(R.drawable.letter_die);
                     }
+
+                    handleCallBack.handleTileClick(letterDie.getRow(), letterDie.getColumn(), letterDie.getMyLetter());
                 }
             });
 

@@ -5,11 +5,23 @@ import android.view.View;
 
 public class LetterDie {
     private final char myLetter;
+    private final int row;
+    private final int column;
     private boolean isFocusedOn;
 
-    public LetterDie (char letter) {
+    public LetterDie (int row, int column, char letter) {
+        this.row = row;
+        this.column = column;
         this.myLetter = letter;
         this.isFocusedOn = false;
+    }
+
+    public boolean isThisTileMyNeighbor(LetterDie letterDie) {
+        return true;
+    }
+
+    public boolean isFocusedOn() {
+        return isFocusedOn;
     }
 
     public void toggleIsFocusedOn() {
@@ -24,7 +36,11 @@ public class LetterDie {
         return myLetter;
     }
 
-    public boolean isFocusedOn() {
-        return isFocusedOn;
+    public int getRow() {
+        return row;
+    }
+
+    public int getColumn() {
+        return column;
     }
 }
