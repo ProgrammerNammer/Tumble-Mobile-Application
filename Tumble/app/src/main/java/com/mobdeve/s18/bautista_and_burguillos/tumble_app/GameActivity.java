@@ -66,22 +66,22 @@ public class GameActivity extends AppCompatActivity implements LetterDieAdapter.
         this.btn_new_game.setOnClickListener(new View.OnClickListener() {
             @Override
 
-            public void onClick(View view){
-                Intent i = new Intent(view.getContext(),GameActivity.class);
+            public void onClick(View view) {
+                Intent i = new Intent(view.getContext(), GameActivity.class);
                 finish();
                 startActivity(i);
             }
         });
 
-       //   Clearing default value
+        //   Clearing default value
         tv_word_formed.setText("");
     }
 
     private void initTimer() {
         progress = 0;
 
-        pb_progressbar_1 =(ProgressBar)findViewById(R.id.progressbar);
-        pb_progressbar_2 =(ProgressBar)findViewById(R.id.progressbar2);
+        pb_progressbar_1 = (ProgressBar) findViewById(R.id.progressbar);
+        pb_progressbar_2 = (ProgressBar) findViewById(R.id.progressbar2);
         pb_progressbar_1.setProgress(progress);
         pb_progressbar_2.setProgress(progress);
 
@@ -89,13 +89,13 @@ public class GameActivity extends AppCompatActivity implements LetterDieAdapter.
         Drawable drawable = AppCompatResources.getDrawable(this, R.drawable.custom_timer);
         pb_progressbar_1.setProgressDrawable(drawable);
 
-        cdt_timer =new CountDownTimer(180000,1000) {
+        cdt_timer = new CountDownTimer(180000, 1000) {
             @Override
             public void onTick(long millisUntilFinished) {
                 // Log.v("Time", "Tick of Progress"+ i+ millisUntilFinished);
                 progress++;
-                pb_progressbar_1.setProgress((int)progress*100/(180000/1000));
-                pb_progressbar_2.setProgress((int)progress*100/(180000/1000));
+                pb_progressbar_1.setProgress((int) progress * 100 / (180000 / 1000));
+                pb_progressbar_2.setProgress((int) progress * 100 / (180000 / 1000));
             }
 
             @Override
@@ -119,7 +119,7 @@ public class GameActivity extends AppCompatActivity implements LetterDieAdapter.
 
             for (int column = 0; column < DIMENSIONS; column++) {
                 //  TODO: Loaded RNG, difficult letters should spawn less!
-                char myDieLetter = (char)(random.nextInt(26) + 'A');
+                char myDieLetter = (char) (random.nextInt(26) + 'A');
                 letterDieRow.add(new LetterDie(row, column, myDieLetter));
             }
 
@@ -208,13 +208,13 @@ public class GameActivity extends AppCompatActivity implements LetterDieAdapter.
     callback returns a string "404" if it didn't find the word in the dictionary but if it does find a word it prints to log a String
     in JSON format that contains the word, the word's definition, and info about the word;
     */
-        private String inflections(String s){
+    private String inflections(String s) {
         final String url = "https://api.dictionaryapi.dev/api/v2/entries/en/";
         final String word = s;
-        return url+word;
+        return url + word;
     }
 
-    private class CallBackTask extends AsyncTask<String,Integer,String> {
+    private class CallBackTask extends AsyncTask<String, Integer, String> {
         @Override
         protected String doInBackground(String... params) {
             try {
@@ -224,18 +224,19 @@ public class GameActivity extends AppCompatActivity implements LetterDieAdapter.
                 BufferedReader reader = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
                 StringBuilder stringBuilder = new StringBuilder();
                 String line = null;
-                while((line = reader.readLine()) != null){
-                    stringBuilder.append(line+ "\n");
+                while ((line = reader.readLine()) != null) {
+                    stringBuilder.append(line + "\n");
                 }
                 return stringBuilder.toString();
-            }catch(Exception e){
+            } catch (Exception e) {
                 e.printStackTrace();
                 return "404";
             }
 
         }
+
         @Override
-        protected void onPostExecute(String result){
+        protected void onPostExecute(String result) {
             super.onPostExecute(result);
             System.out.println("onPostExecute: " + result);
         }

@@ -30,8 +30,8 @@ public class MainActivity extends AppCompatActivity {
         new_game.setOnClickListener(new View.OnClickListener() {
             @Override
 
-            public void onClick(View view){
-                Intent i = new Intent(view.getContext(),GameActivity.class);
+            public void onClick(View view) {
+                Intent i = new Intent(view.getContext(), GameActivity.class);
                 startActivity(i);
             }
         });
@@ -39,8 +39,8 @@ public class MainActivity extends AppCompatActivity {
         my_leaderboard.setOnClickListener(new View.OnClickListener() {
             @Override
 
-            public void onClick(View view){
-                Intent i = new Intent(view.getContext(),ScoreboardActivity.class);
+            public void onClick(View view) {
+                Intent i = new Intent(view.getContext(), ScoreboardActivity.class);
                 startActivity(i);
             }
         });
@@ -48,7 +48,7 @@ public class MainActivity extends AppCompatActivity {
         exitButton.setOnClickListener(new View.OnClickListener() {
             @Override
 
-            public void onClick(View view){
+            public void onClick(View view) {
                 finishAndRemoveTask();
             }
         });

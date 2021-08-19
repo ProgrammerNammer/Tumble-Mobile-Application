@@ -9,7 +9,7 @@ public class LetterDie {
     private final int column;
     private boolean isFocusedOn;
 
-    public LetterDie (int row, int column, char letter) {
+    public LetterDie(int row, int column, char letter) {
         this.row = row;
         this.column = column;
         this.myLetter = letter;

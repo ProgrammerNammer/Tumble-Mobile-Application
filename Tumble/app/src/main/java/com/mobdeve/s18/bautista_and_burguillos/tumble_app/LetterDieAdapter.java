@@ -21,7 +21,7 @@ public class LetterDieAdapter extends ArrayAdapter<LetterDie> {
 
     private final IHandleTouchEvent handleCallBack;
 
-    public LetterDieAdapter (Context context, ArrayList<LetterDie> letterDieRow, IHandleTouchEvent handleCallBack) {
+    public LetterDieAdapter(Context context, ArrayList<LetterDie> letterDieRow, IHandleTouchEvent handleCallBack) {
         super(context, 0, letterDieRow);
 
         this.handleCallBack = handleCallBack;

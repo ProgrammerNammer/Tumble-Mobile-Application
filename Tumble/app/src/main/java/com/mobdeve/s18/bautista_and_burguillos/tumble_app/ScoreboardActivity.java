@@ -36,7 +36,7 @@ public class ScoreboardActivity extends AppCompatActivity {
         main_menu.setOnClickListener(new View.OnClickListener() {
             @Override
 
-            public void onClick(View view){
+            public void onClick(View view) {
                 finish();
             }
         });
@@ -44,7 +44,7 @@ public class ScoreboardActivity extends AppCompatActivity {
 
     private ArrayList<ScoreboardItem> getScoreboard() {
         //  TODO: Get from Database. Below is just a sample. MAXIMUM of 10 ITEMS
-        Integer[] sampleScores = {199, 2314, 21351, 1231, 128491, 123, 1515, 99999, 10, 111, 313124,1141321,2412,41251,5,15};
+        Integer[] sampleScores = {199, 2314, 21351, 1231, 128491, 123, 1515, 99999, 10, 111, 313124, 1141321, 2412, 41251, 5, 15};
 
         ArrayList<ScoreboardItem> scoreboardItems = new ArrayList<>();
 

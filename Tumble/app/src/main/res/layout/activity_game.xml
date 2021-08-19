@@ -2,20 +2,20 @@
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_height="match_parent"
     android:layout_width="match_parent"
-    android:orientation="vertical" >
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
     <LinearLayout
         android:id="@+id/linearLayoutCompat5"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingHorizontal="15dp"
-        android:paddingBottom="20dp"
-        android:background="@drawable/activity_game_top_background"
-        android:layout_alignParentTop="true"
         android:layout_above="@+id/constraint_layout"
-        android:orientation="vertical">
+        android:layout_alignParentTop="true"
+        android:background="@drawable/activity_game_top_background"
+        android:orientation="vertical"
+        android:paddingHorizontal="15dp"
+        android:paddingBottom="20dp">
 
         <TextView
             android:id="@+id/tv_total_score"
@@ -23,9 +23,9 @@
             android:layout_height="wrap_content"
             android:gravity="center"
             android:text="@string/total_score"
+            android:textAllCaps="true"
             android:textColor="@color/white"
-            android:textSize="24pt"
-            android:textAllCaps="true" />
+            android:textSize="24pt" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -44,25 +44,25 @@
                 <ProgressBar
                     android:id="@+id/progressbar"
                     style="@android:style/Widget.Material.ProgressBar.Horizontal"
-                    android:progressDrawable="@drawable/custom_timer"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:scaleY="3"
                     android:layout_weight=".5"
                     android:max="100"
-                    android:progress="0" />
+                    android:progress="0"
+                    android:progressDrawable="@drawable/custom_timer"
+                    android:scaleY="3" />
 
                 <ProgressBar
                     android:id="@+id/progressbar2"
                     style="@style/Widget.AppCompat.ProgressBar.Horizontal"
-                    android:progressDrawable="@drawable/custom_timer"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:scaleY="3"
                     android:layout_weight=".5"
                     android:max="100"
                     android:progress="0"
-                    android:rotation="180" />
+                    android:progressDrawable="@drawable/custom_timer"
+                    android:rotation="180"
+                    android:scaleY="3" />
 
             </TableRow>
 
@@ -72,11 +72,11 @@
             android:id="@+id/tl_game_grid"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:gravity="center"
+            android:background="@drawable/game_board"
             android:foregroundGravity="center"
-            android:weightSum="5"
+            android:gravity="center"
             android:padding="5dp"
-            android:background="@drawable/game_board" >
+            android:weightSum="5">
 
             <!-- Game data here is injected `programtically` on app run -->
 
@@ -88,9 +88,9 @@
         android:id="@+id/constraint_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_above="@id/linearLayoutCompat4"
         android:background="@drawable/activity_game_middle_background"
-        android:padding="25dp"
-        android:layout_above="@id/linearLayoutCompat4">
+        android:padding="25dp">
 
         <TextView
             android:id="@+id/tv_word_formed"
@@ -98,9 +98,9 @@
             android:layout_height="wrap_content"
             android:gravity="center"
             android:text="@string/word_formed"
+            android:textAllCaps="true"
             android:textColor="@color/white"
             android:textSize="18pt"
-            android:textAllCaps="true"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -121,12 +121,12 @@
         android:id="@+id/linearLayoutCompat4"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
         android:layout_alignParentBottom="true"
+        android:background="@drawable/activity_game_bottom_background"
         android:gravity="bottom"
+        android:orientation="horizontal"
         android:padding="10dp"
-        android:weightSum="2"
-        android:background="@drawable/activity_game_bottom_background">
+        android:weightSum="2">
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/AppCompatButton"
