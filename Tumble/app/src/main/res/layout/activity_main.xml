@@ -3,8 +3,10 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:background="@drawable/activity_main_background"
-    android:padding="30dp">
+    android:padding="30dp"
+    tools:context=".MainActivity">
 
     <LinearLayout
         android:layout_width="match_parent"

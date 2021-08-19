@@ -19,7 +19,7 @@ public class ViewHolder extends RecyclerView.ViewHolder {
     }
 
     @SuppressLint("SetTextI18n")
-    public void setTv_score(int tv_score) {
-        this.tv_score.setText(Integer.toString(tv_score));
+    public void setTv_score(String tv_score) {
+        this.tv_score.setText(tv_score);
     }
 }
