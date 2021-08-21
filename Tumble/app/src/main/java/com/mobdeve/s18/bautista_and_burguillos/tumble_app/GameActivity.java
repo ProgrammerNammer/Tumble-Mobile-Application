@@ -18,14 +18,25 @@ import android.widget.ProgressBar;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.content.res.AppCompatResources;
+
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.ExecutionException;
 
 import javax.net.ssl.HttpsURLConnection;
 
@@ -44,6 +55,7 @@ public class GameActivity extends AppCompatActivity {
     private ArrayList<LetterDieAdapter> letterDieAdapters;
     private Player player;
     private int progress;
+    private String isWord;
 
     //  TODO: Cleanup, progress bar still going even after finish
     @Override
@@ -175,6 +187,19 @@ public class GameActivity extends AppCompatActivity {
     private void handleDiceDeselect() {
         //  TODO: Connect w/ API & Scoring System
         //  example: if (validWord() && player.isUniqueValidWord) {player.addValidWord()}
+        CallBackTask task = new CallBackTask();
+        try {
+            if(task.execute(inflections(tv_word_formed.getText().toString())).get().equals("404")){
+                Toast.makeText(GameActivity.this, "Not a real word", Toast.LENGTH_SHORT).show();
+            }
+            else{
+                Toast.makeText(GameActivity.this, "insert added score here", Toast.LENGTH_SHORT).show();
+            }
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
 
         tv_word_formed.setText("");
         player.clearDiceCurrentlySelected();
@@ -267,5 +292,26 @@ public class GameActivity extends AppCompatActivity {
             super.onPostExecute(result);
             System.out.println("onPostExecute: " + result);
         }
+    }
+    private void gameOver(String score){
+
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        Map<String, Object> user = new HashMap<>();
+        user.put("username", FirebaseAuth.getInstance().getCurrentUser().getDisplayName());
+        user.put("score", score);
+        db.collection("highscores")
+                .add(user)
+                .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                    @Override
+                    public void onSuccess(DocumentReference documentReference) {
+                        Log.d("TAG", "DocumentSnapshot added with ID: " + documentReference.getId());
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.w("TAG", "Error adding document", e);
+                    }
+                });
     }
 }

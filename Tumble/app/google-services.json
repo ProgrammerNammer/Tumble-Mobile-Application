@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "393047013480",
+    "project_id": "tumble-4c7d1",
+    "storage_bucket": "tumble-4c7d1.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:393047013480:android:72ba63148ec91e381ae3dd",
+        "android_client_info": {
+          "package_name": "com.mobdeve.s18.bautista_and_burguillos.tumble_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "393047013480-6g873vud71ncv6es52eha7s5n67el05i.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA9l8qcjD9NyD-ABrbsxJVtNwAjTlR7gU0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "393047013480-6g873vud71ncv6es52eha7s5n67el05i.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
