@@ -22,7 +22,6 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Random;
 
 import javax.net.ssl.HttpsURLConnection;
 
@@ -37,6 +36,7 @@ public class GameActivity extends AppCompatActivity implements LetterDieAdapter.
     private TextView tv_word_formed;
 
     private ArrayList<ArrayList<LetterDie>> letterDiceGrid;
+    private LetterDiceGenerator letterDiceGenerator;
     private Player player;
     private int progress;
 
@@ -58,6 +58,7 @@ public class GameActivity extends AppCompatActivity implements LetterDieAdapter.
         tv_word_formed = (TextView) findViewById(R.id.tv_word_formed);
         tl_game_grid = findViewById(R.id.tl_game_grid);
 
+        letterDiceGenerator = new LetterDiceGenerator(this);
         letterDiceGrid = new ArrayList<>();
         player = new Player();
 
@@ -106,23 +107,11 @@ public class GameActivity extends AppCompatActivity implements LetterDieAdapter.
     }
 
     private void generateGameBoard() {
-        Random random = new Random();
-
         //  Set table's weight sum to properly scale its rows evenly
         tl_game_grid.setWeightSum(DIMENSIONS);
 
         //  First generate the letter dice
-        for (int row = 0; row < DIMENSIONS; row++) {
-            ArrayList<LetterDie> letterDieRow = new ArrayList<>();
-
-            for (int column = 0; column < DIMENSIONS; column++) {
-                //  TODO: Loaded RNG, difficult letters should spawn less!
-                char myDieLetter = (char) (random.nextInt(26) + 'A');
-                letterDieRow.add(new LetterDie(row, column, myDieLetter));
-            }
-
-            letterDiceGrid.add(letterDieRow);
-        }
+        letterDiceGrid = letterDiceGenerator.generateTileGrid(DIMENSIONS);
 
         //  Now, render the board's contents
         for (int row = 0; row < letterDiceGrid.size(); row++) {
