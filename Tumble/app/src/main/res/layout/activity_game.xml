@@ -22,6 +22,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
+            android:maxLines="1"
             android:text="@string/total_score"
             android:textAllCaps="true"
             android:textColor="@color/white"
@@ -90,17 +91,18 @@
         android:layout_height="wrap_content"
         android:layout_above="@id/linearLayoutCompat4"
         android:background="@drawable/activity_game_middle_background"
-        android:padding="25dp">
+        android:paddingVertical="25dp">
 
         <TextView
             android:id="@+id/tv_word_formed"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
+            android:maxLines="1"
             android:text="@string/word_formed"
             android:textAllCaps="true"
             android:textColor="@color/white"
-            android:textSize="18pt"
+            android:textSize="16pt"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -110,6 +112,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
+            android:maxLines="1"
             android:text="@string/score_of_word_formed"
             android:textColor="@color/white"
             android:textSize="10pt"
@@ -125,8 +128,7 @@
         android:background="@drawable/activity_game_bottom_background"
         android:gravity="bottom"
         android:orientation="horizontal"
-        android:padding="10dp"
-        android:weightSum="2">
+        android:padding="10dp">
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/AppCompatButton"
