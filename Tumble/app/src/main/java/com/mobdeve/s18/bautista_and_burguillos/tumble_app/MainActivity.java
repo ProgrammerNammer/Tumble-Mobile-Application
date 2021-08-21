@@ -13,6 +13,8 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.firebase.auth.FirebaseAuth;
+
 public class MainActivity extends AppCompatActivity {
 
     private Button new_game;
@@ -50,6 +52,11 @@ public class MainActivity extends AppCompatActivity {
 
             public void onClick(View view) {
                 finishAndRemoveTask();
+                FirebaseAuth.getInstance().signOut();
+                Intent i=new Intent(view.getContext(), LoginActivity.class);
+                i.putExtra("finish", true);
+                i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP); // To clean up all activities
+                startActivity(i);
             }
         });
 

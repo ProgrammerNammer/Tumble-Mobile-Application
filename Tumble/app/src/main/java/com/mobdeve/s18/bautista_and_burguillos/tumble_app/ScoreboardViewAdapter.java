@@ -27,6 +27,7 @@ public class ScoreboardViewAdapter extends RecyclerView.Adapter<ScoreboardViewHo
     @Override
     public void onBindViewHolder(ScoreboardViewHolder scoreboardViewHolder, final int position) {
         scoreboardViewHolder.setTv_score(scoreList.get(position).getScore());
+        scoreboardViewHolder.setTv_username(scoreList.get(position).getUsername());
     }
 
     @Override
