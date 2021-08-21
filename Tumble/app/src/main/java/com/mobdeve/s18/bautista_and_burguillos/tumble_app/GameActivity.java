@@ -1,11 +1,15 @@
 package com.mobdeve.s18.bautista_and_burguillos.tumble_app;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.util.Log;
 import android.view.Gravity;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -26,7 +30,7 @@ import java.util.ArrayList;
 import javax.net.ssl.HttpsURLConnection;
 
 
-public class GameActivity extends AppCompatActivity implements LetterDieAdapter.IHandleTouchEvent {
+public class GameActivity extends AppCompatActivity {
     private final int DIMENSIONS = 4;
     private Button btn_new_game;
     private CountDownTimer cdt_timer;
@@ -37,6 +41,7 @@ public class GameActivity extends AppCompatActivity implements LetterDieAdapter.
 
     private ArrayList<ArrayList<LetterDie>> letterDiceGrid;
     private LetterDiceGenerator letterDiceGenerator;
+    private ArrayList<LetterDieAdapter> letterDieAdapters;
     private Player player;
     private int progress;
 
@@ -60,16 +65,13 @@ public class GameActivity extends AppCompatActivity implements LetterDieAdapter.
 
         letterDiceGenerator = new LetterDiceGenerator(this);
         letterDiceGrid = new ArrayList<>();
+        letterDieAdapters = new ArrayList<>();
         player = new Player();
 
-        this.btn_new_game.setOnClickListener(new View.OnClickListener() {
-            @Override
-
-            public void onClick(View view) {
-                Intent i = new Intent(view.getContext(), GameActivity.class);
-                finish();
-                startActivity(i);
-            }
+        this.btn_new_game.setOnClickListener(view -> {
+            Intent i = new Intent(view.getContext(), GameActivity.class);
+            finish();
+            startActivity(i);
         });
 
         //   Clearing default value
@@ -106,6 +108,7 @@ public class GameActivity extends AppCompatActivity implements LetterDieAdapter.
         };
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     private void generateGameBoard() {
         //  Set table's weight sum to properly scale its rows evenly
         tl_game_grid.setWeightSum(DIMENSIONS);
@@ -115,31 +118,26 @@ public class GameActivity extends AppCompatActivity implements LetterDieAdapter.
 
         //  Now, render the board's contents
         for (int row = 0; row < letterDiceGrid.size(); row++) {
-            LetterDieAdapter letterDieAdapter = new LetterDieAdapter(this, letterDiceGrid.get(row), this);
+            LetterDieAdapter letterDieAdapter = new LetterDieAdapter(this, letterDiceGrid.get(row));
             LinearLayout tableRow = new LinearLayout(this);
+            letterDieAdapters.add(letterDieAdapter);
 
             tableRow.post(
-                    new Runnable() {
-                        @Override
-                        public void run() {
-                            TableRow.LayoutParams layoutParams = new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.WRAP_CONTENT, 1f);
-                            tableRow.setLayoutParams(layoutParams);
-                            tableRow.setGravity(Gravity.CENTER);
-                            tableRow.setWeightSum(DIMENSIONS);
-                        }
+                    () -> {
+                        TableRow.LayoutParams layoutParams = new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.WRAP_CONTENT, 1f);
+                        tableRow.setLayoutParams(layoutParams);
+                        tableRow.setGravity(Gravity.CENTER);
+                        tableRow.setWeightSum(DIMENSIONS);
                     }
             );
 
             for (int column = 0; column < letterDiceGrid.size(); column++) {
                 View view = letterDieAdapter.getView(column, null, (ViewGroup) getWindow().getDecorView().getRootView());
                 view.post(
-                        new Runnable() {
-                            @Override
-                            public void run() {
-                                TableRow.LayoutParams layoutParams = new TableRow.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT, 1f);
-                                layoutParams.setMargins(30, 30, 30, 30);
-                                view.setLayoutParams(layoutParams);
-                            }
+                        () -> {
+                            TableRow.LayoutParams layoutParams = new TableRow.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT, 1f);
+                            layoutParams.setMargins(30, 30, 30, 30);
+                            view.setLayoutParams(layoutParams);
                         }
                 );
 
@@ -148,40 +146,80 @@ public class GameActivity extends AppCompatActivity implements LetterDieAdapter.
 
             tl_game_grid.addView(tableRow);
         }
-    }
 
-    //  TODO: Documentation
-    //  Returns whether or not tiles are neighbors
-    @Override
-    public boolean handleTileClick(LetterDie letterDie, char letterTile) {
-        String stringLetterTile = Character.toString(letterTile);
-        String currentWordText = tv_word_formed.getText().toString();
+        tl_game_grid.setOnTouchListener((v, event) -> {
 
-        if (player.isThisTileAlreadySelected(letterDie)) {
-            return false;
-        }
-
-        if (player.isEmptyDiceCurrentlySelected()) {
-            currentWordText += stringLetterTile;
-            tv_word_formed.setText(currentWordText);
-
-            player.pushDiceCurrentlySelected(letterDie);
+            switch (event.getAction()) {
+                case MotionEvent.ACTION_MOVE:
+                case MotionEvent.ACTION_DOWN:
+                case MotionEvent.ACTION_POINTER_DOWN: {
+                    handleDiceSelect((int) event.getRawX(), (int) event.getRawY());
+                }
+                break;
+                case MotionEvent.ACTION_UP:
+                case MotionEvent.ACTION_POINTER_UP:
+                case MotionEvent.ACTION_CANCEL: {
+                    handleDiceDeselect();
+                }
+                break;
+                default: {
+                    Log.d("MyTag", "" + event.getAction());
+                }
+            }
 
             return true;
-        } else {
-            LetterDie lastLetterDie = player.peekDiceCurrentlySelected();
+        });
+    }
 
-            if (lastLetterDie.isThisTileMyNeighbor(letterDie)) {
-                currentWordText += stringLetterTile;
-                tv_word_formed.setText(currentWordText);
+    private void handleDiceDeselect() {
+        //  TODO: Connect w/ API & Scoring System
+        //  example: if (validWord() && player.isUniqueValidWord) {player.addValidWord()}
 
-                player.pushDiceCurrentlySelected(letterDie);
+        tv_word_formed.setText("");
+        player.clearDiceCurrentlySelected();
+    }
 
-                return true;
-            } else {
-                return false;
+    public void handleDiceSelect(final int RAW_X, final int RAW_Y) {
+        for (int i = 0; i < tl_game_grid.getChildCount(); i++) {
+            if (isPressingOverThisView(tl_game_grid.getChildAt(i), RAW_X, RAW_Y)) {
+                LinearLayout rowChildren = (LinearLayout) tl_game_grid.getChildAt(i);
+
+                for (int j = 0; j < rowChildren.getChildCount(); j++) {
+                    if (isPressingOverThisView(rowChildren.getChildAt(j), RAW_X, RAW_Y)) {
+                        LetterDie letterDie = letterDiceGrid.get(i).get(j);
+                        String stringLetterTile = Character.toString(letterDie.getMyLetter());
+                        String currentWordText = tv_word_formed.getText().toString();
+
+                        if (player.isEmptyDiceCurrentlySelected() ||
+                                (!player.isThisTileAlreadySelected(letterDie)
+                                        && player.peekDiceCurrentlySelected().isThisTileMyNeighbor(letterDie))) {
+                            currentWordText += stringLetterTile;
+                            tv_word_formed.setText(currentWordText);
+
+                            player.pushDiceCurrentlySelected(letterDie);
+                        }
+
+                        //  TODO: Connect to custom adapter
+                        // letterDiceGrid.get(i).get(j).setFocusedOn(true);
+                        // letterDieAdapters.get(i).notifyDataSetChanged();
+                        break;
+                    }
+
+                }
+
+                break;
             }
         }
+    }
+
+    private boolean isPressingOverThisView(View view, int rawX, int rawY) {
+        Rect rect = new Rect();
+        int[] location = new int[2];
+
+        view.getDrawingRect(rect);
+        view.getLocationOnScreen(location);
+        rect.offset(location[0], location[1]);
+        return rect.contains(rawX, rawY);
     }
 
     /*

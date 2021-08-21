@@ -26,6 +26,10 @@ public class Player {
         return true;
     }
 
+    public void clearDiceCurrentlySelected() {
+        diceCurrentlySelected.clear();
+    }
+
     public void pushDiceCurrentlySelected(LetterDie letterDie) {
         diceCurrentlySelected.push(letterDie);
     }
@@ -43,7 +47,7 @@ public class Player {
     }
 
     public boolean isThisTileAlreadySelected(LetterDie letterDie) {
-        return diceCurrentlySelected.contains(letterDie);
+        return diceCurrentlySelected.isEmpty() || diceCurrentlySelected.contains(letterDie);
     }
 
 

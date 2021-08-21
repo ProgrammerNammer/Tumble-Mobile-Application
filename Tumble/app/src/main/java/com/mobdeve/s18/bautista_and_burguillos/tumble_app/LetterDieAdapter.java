@@ -1,6 +1,7 @@
 package com.mobdeve.s18.bautista_and_burguillos.tumble_app;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,18 +14,11 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import java.util.ArrayList;
 
 public class LetterDieAdapter extends ArrayAdapter<LetterDie> {
-    private final ArrayList<LetterDie> letterDieRow;
+    private ArrayList<LetterDie> letterDieRow;
 
-    public interface IHandleTouchEvent {
-        boolean handleTileClick(LetterDie letterDie, char letterTile);
-    }
-
-    private final IHandleTouchEvent handleCallBack;
-
-    public LetterDieAdapter(Context context, ArrayList<LetterDie> letterDieRow, IHandleTouchEvent handleCallBack) {
+    public LetterDieAdapter(Context context, ArrayList<LetterDie> letterDieRow) {
         super(context, 0, letterDieRow);
 
-        this.handleCallBack = handleCallBack;
         this.letterDieRow = letterDieRow;
     }
 
@@ -43,22 +37,7 @@ public class LetterDieAdapter extends ArrayAdapter<LetterDie> {
 
             //  TODO: Hover/Drag selection
             viewHolder.cl_letter_tile = convertView.findViewById(R.id.cl_letter_tile);
-            viewHolder.cl_letter_tile.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    boolean isValidNeighbor = handleCallBack.handleTileClick(letterDie, letterDie.getMyLetter());
-
-                    if (isValidNeighbor) {
-                        letterDie.toggleIsFocusedOn();
-
-                        if (letterDie.isFocusedOn()) {
-                            viewHolder.cl_letter_tile.setBackgroundResource(R.drawable.letter_die_activated);
-                        } else {
-                            viewHolder.cl_letter_tile.setBackgroundResource(R.drawable.letter_die);
-                        }
-                    }
-                }
-            });
+            viewHolder.cl_letter_tile.setBackgroundResource(letterDie.isFocusedOn() ? R.drawable.letter_die_activated : R.drawable.letter_die);
 
             convertView.setTag(viewHolder);
         } else {
