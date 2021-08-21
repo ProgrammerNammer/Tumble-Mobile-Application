@@ -137,6 +137,7 @@ public class GameActivity extends AppCompatActivity {
                         () -> {
                             TableRow.LayoutParams layoutParams = new TableRow.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT, 1f);
                             layoutParams.setMargins(30, 30, 30, 30);
+
                             view.setLayoutParams(layoutParams);
                         }
                 );
@@ -185,7 +186,7 @@ public class GameActivity extends AppCompatActivity {
                 LinearLayout rowChildren = (LinearLayout) tl_game_grid.getChildAt(i);
 
                 for (int j = 0; j < rowChildren.getChildCount(); j++) {
-                    if (isPressingOverThisView(rowChildren.getChildAt(j), RAW_X, RAW_Y)) {
+                    if (isPressingOverThisView(rowChildren.getChildAt(j).findViewById(R.id.iv_hitbox), RAW_X, RAW_Y)) {
                         LetterDie letterDie = letterDiceGrid.get(i).get(j);
                         String stringLetterTile = Character.toString(letterDie.getMyLetter());
                         String currentWordText = tv_word_formed.getText().toString();
@@ -213,10 +214,17 @@ public class GameActivity extends AppCompatActivity {
     }
 
     private boolean isPressingOverThisView(View view, int rawX, int rawY) {
+        final int AREA_DECREASE = 100;
         Rect rect = new Rect();
         int[] location = new int[2];
 
         view.getDrawingRect(rect);
+
+//        rect.top -= AREA_DECREASE;
+//        rect.left -= AREA_DECREASE;
+//        rect.bottom -= AREA_DECREASE;
+//        rect.right -= AREA_DECREASE;
+
         view.getLocationOnScreen(location);
         rect.offset(location[0], location[1]);
         return rect.contains(rawX, rawY);
