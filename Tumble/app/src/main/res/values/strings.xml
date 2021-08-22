@@ -9,4 +9,9 @@
     <string name="word_formed">{Word Here}</string>
     <string name="score_of_word_formed">{+Score Here}</string>
     <string name="total_score">{Total}</string>
+    <string name="hint_email">Email</string>
+    <string name="hint_password">Password</string>
+    <string name="login">Login</string>
+    <string name="forgot_password">Forgot Password?</string>
+    <string name="register">Create New Account</string>
 </resources>
