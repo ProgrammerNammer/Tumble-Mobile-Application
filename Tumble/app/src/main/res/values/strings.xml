@@ -11,7 +11,12 @@
     <string name="total_score">{Total}</string>
     <string name="hint_email">Email</string>
     <string name="hint_password">Password</string>
+    <string name="hint_username">Username</string>
     <string name="login">Login</string>
+    <string name="register">Register</string>
     <string name="forgot_password">Forgot Password?</string>
-    <string name="register">Create New Account</string>
+    <string name="create_new_account">Create New Account</string>
+    <string name="already_registered">Already registered? Login Here</string>
+    <string name="login_header">Login to your account</string>
+    <string name="register_header">Create your new Tumble account</string>
 </resources>

@@ -15,10 +15,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_weight="5"
-        android:orientation="vertical"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        android:orientation="vertical">
 
         <TextView
             android:layout_width="match_parent"
@@ -47,8 +44,17 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
 
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:fontFamily="@font/lato"
+                android:text="@string/login_header"
+                android:textColor="#F7F7F8"
+                android:textSize="8pt" />
+
             <EditText
-                android:id="@+id/et_email"
+                android:id="@+id/et_email_login"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
@@ -63,7 +69,7 @@
                 android:textSize="10pt" />
 
             <EditText
-                android:id="@+id/et_password"
+                android:id="@+id/et_password_login"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
@@ -112,8 +118,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:layout_marginTop="10dp"
-                android:layout_marginBottom="50dp"
+                android:layout_marginTop="25dp"
                 android:fontFamily="@font/lato"
                 android:text="@string/forgot_password"
                 android:textColor="#FFFFFF"
@@ -125,14 +130,14 @@
         </androidx.appcompat.widget.LinearLayoutCompat>
 
         <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/btn_register"
+            android:id="@+id/btn_create_a_new_account"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@drawable/button_white_logic"
             android:fontFamily="@font/lato"
             android:paddingTop="10dp"
             android:paddingBottom="20dp"
-            android:text="@string/register"
+            android:text="@string/create_new_account"
             android:textAllCaps="false"
             android:textFontWeight="400"
             android:textSize="10pt"

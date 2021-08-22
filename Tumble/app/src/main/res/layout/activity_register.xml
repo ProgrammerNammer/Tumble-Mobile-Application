@@ -4,114 +4,122 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/activity_main_background"
+    android:background="@drawable/activity_register_login_background"
     android:orientation="vertical"
+    android:padding="30dp"
+    android:weightSum="10"
     tools:context=".RegisterActivity">
 
-    <LinearLayout
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:id="@+id/linearLayoutCompat3"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:weightSum="4">
+        android:layout_weight="6"
+        android:orientation="vertical">
 
-        <androidx.appcompat.widget.LinearLayoutCompat
-            android:id="@+id/linearLayoutCompat3"
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:fontFamily="@font/lato"
+            android:gravity="center"
+            android:text="@string/app_name"
+            android:textAllCaps="true"
+            android:textColor="@color/white"
+            android:textSize="30pt" />
+
+    </androidx.appcompat.widget.LinearLayoutCompat>
+
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:id="@+id/linearLayoutCompat"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="4"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:fontFamily="@font/lato"
+            android:text="@string/register_header"
+            android:textColor="#F7F7F8"
+            android:textSize="8pt" />
+
+        <EditText
+            android:id="@+id/et_username_register"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="2"
-            android:orientation="vertical"
+            android:layout_gravity="center"
+            android:background="@android:color/white"
+            android:fontFamily="@font/lato"
+            android:hint="@string/hint_username"
+            android:inputType="textPersonName"
+            android:padding="10dp"
+            android:textColor="@android:color/black"
+            android:textColorHint="@android:color/darker_gray"
+            android:textFontWeight="400"
+            android:textSize="10pt" />
+
+        <EditText
+            android:id="@+id/et_email_register"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="15dp"
+            android:background="@android:color/white"
+            android:fontFamily="@font/lato"
+            android:hint="@string/hint_email"
+            android:inputType="textEmailAddress"
+            android:padding="10dp"
+            android:textColor="@android:color/black"
+            android:textColorHint="@android:color/darker_gray"
+            android:textFontWeight="400"
+            android:textSize="10pt" />
+
+        <EditText
+            android:id="@+id/et_password_register"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="15dp"
+            android:background="@android:color/white"
+            android:fontFamily="@font/lato"
+            android:hint="@string/hint_password"
+            android:inputType="textPassword"
+            android:padding="10dp"
+            android:textColor="@android:color/black"
+            android:textColorHint="@android:color/darker_gray"
+            android:textFontWeight="400"
+            android:textSize="10pt" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btn_register"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="50dp"
+            android:background="@drawable/button_white_logic"
+            android:fontFamily="@font/lato"
+            android:paddingTop="10dp"
+            android:paddingBottom="20dp"
+            android:text="@string/register"
+            android:textAllCaps="false"
+            android:textFontWeight="400"
+            android:textSize="10pt"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
+            app:layout_constraintStart_toStartOf="parent" />
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:fontFamily="@font/lato"
-                android:gravity="center"
-                android:text="@string/app_name"
-                android:textAllCaps="true"
-                android:textColor="@color/white"
-                android:textSize="30pt" />
+        <TextView
+            android:id="@+id/tv_already_registered"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="25dp"
+            android:fontFamily="@font/lato"
+            android:text="@string/already_registered"
+            android:textColor="#FFFFFF"
+            android:textSize="8pt"
+            android:textStyle="bold" />
 
-        </androidx.appcompat.widget.LinearLayoutCompat>
-
-    </LinearLayout>
-
-    <TextView
-        android:id="@+id/textView2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:text="Create New Account"
-        android:textColor="#F7F7F8"
-        android:textSize="15sp"
-        android:fontFamily="@font/lato"/>
-
-    <EditText
-        android:id="@+id/Username"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-
-
-        android:background="@android:color/white"
-
-        android:hint="Username"
-        android:inputType="textPersonName"
-        android:padding="10dp"
-        android:textColor="@android:color/black"
-        android:textColorHint="@android:color/darker_gray"
-        android:textSize="14sp" />
-
-    <EditText
-        android:id="@+id/et_email"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-
-        android:layout_marginTop="16dp"
-
-        android:background="@android:color/white"
-        android:hint="Email"
-        android:inputType="textEmailAddress"
-        android:padding="10dp"
-        android:textColor="@android:color/black"
-        android:textColorHint="@android:color/darker_gray"
-        android:textSize="14sp" />
-
-    <EditText
-        android:id="@+id/et_password"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:background="@android:color/white"
-        android:ems="10"
-        android:hint="Password"
-        android:inputType="textPassword"
-        android:padding="10dp"
-        android:textColor="@android:color/black"
-        android:textColorHint="@android:color/darker_gray"
-        android:textSize="14sp"
-        />
-
-    <Button
-        android:id="@+id/registerBtn"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-
-        android:layout_marginTop="32dp"
-
-        android:text="Register"
-        android:textSize="13sp"
-        android:fontFamily="@font/lato"/>
-
-    <TextView
-        android:id="@+id/alreadyreg"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:text="Already Registered ? Login Here"
-        android:fontFamily="@font/lato"
-        android:textColor="#FFFFFF" />
-
+    </androidx.appcompat.widget.LinearLayoutCompat>
 
 </LinearLayout>
