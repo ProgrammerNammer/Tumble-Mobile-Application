@@ -185,24 +185,34 @@ public class GameActivity extends AppCompatActivity {
     }
 
     private void handleDiceDeselect() {
-        //  TODO: Connect w/ API & Scoring System
+        //  TODO: Connect w/ Scoring System
+        String wordFormed = tv_word_formed.getText().toString();
+
         //  example: if (validWord() && player.isUniqueValidWord) {player.addValidWord()}
-        CallBackTask task = new CallBackTask();
-        try {
-            if(task.execute(inflections(tv_word_formed.getText().toString())).get().equals("404")){
-                Toast.makeText(GameActivity.this, "Not a real word", Toast.LENGTH_SHORT).show();
-            }
-            else{
-                Toast.makeText(GameActivity.this, "insert added score here", Toast.LENGTH_SHORT).show();
-            }
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+        if (wordFormed.length() <= 2) {
+            Toast.makeText(GameActivity.this, "Words can not be less than 2 letters.", Toast.LENGTH_SHORT).show();
+        } else if (!player.isUniqueValidWord(wordFormed)) {
+            Toast.makeText(GameActivity.this, "You have already submitted this word.", Toast.LENGTH_SHORT).show();
+        } else if (isValidWord(wordFormed)) {
+            //  Only valid option
+            Toast.makeText(GameActivity.this, "Insert Score here.", Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(GameActivity.this, "This word does not exist.", Toast.LENGTH_SHORT).show();
         }
 
         tv_word_formed.setText("");
         player.clearDiceCurrentlySelected();
+    }
+
+    private boolean isValidWord(String wordFormed) {
+        CallBackTask task = new CallBackTask();
+        try {
+            return task.execute(inflections(wordFormed)).get().equals("404");
+        } catch (ExecutionException | InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        return false;
     }
 
     public void handleDiceSelect(final int RAW_X, final int RAW_Y) {
