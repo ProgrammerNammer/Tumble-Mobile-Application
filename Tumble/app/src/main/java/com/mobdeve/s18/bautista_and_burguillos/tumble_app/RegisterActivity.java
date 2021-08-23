@@ -55,76 +55,61 @@ public class RegisterActivity extends AppCompatActivity {
             finish();
         }
 
+        mRegisterBtn.setOnClickListener(v -> {
+            final String email = mEmail.getText().toString().trim();
+            String password = mPassword.getText().toString().trim();
+            final String Username = mUsername.getText().toString();
 
-        mRegisterBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                final String email = mEmail.getText().toString().trim();
-                String password = mPassword.getText().toString().trim();
-                final String Username = mUsername.getText().toString();
+            if (TextUtils.isEmpty(email)) {
+                mEmail.setError("Email is Required.");
+                return;
+            }
 
-                if (TextUtils.isEmpty(email)) {
-                    mEmail.setError("Email is Required.");
-                    return;
-                }
+            if (TextUtils.isEmpty(password)) {
+                mPassword.setError("Password is Required.");
+                return;
+            }
 
-                if (TextUtils.isEmpty(password)) {
-                    mPassword.setError("Password is Required.");
-                    return;
-                }
+            if (password.length() < 6) {
+                mPassword.setError("Password Must be >= 6 Characters");
+                return;
+            }
 
-                if (password.length() < 6) {
-                    mPassword.setError("Password Must be >= 6 Characters");
-                    return;
-                }
+            //  Register the user in firebase
+            mAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(task -> {
+                if (task.isSuccessful()) {
 
-                //  Register the user in firebase
-                mAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()) {
+                    // send verification link
 
-                            // send verification link
+                    FirebaseUser mUser = mAuth.getCurrentUser();
+                    mUser.sendEmailVerification().addOnSuccessListener(aVoid -> Toast.makeText(RegisterActivity.this, "Verification Email Has been Sent.", Toast.LENGTH_SHORT).show()).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Log.d(TAG, "onFailure: Email not sent " + e.getMessage());
+                        }
+                    });
 
-                            FirebaseUser mUser = mAuth.getCurrentUser();
-                            mUser.sendEmailVerification().addOnSuccessListener(new OnSuccessListener<Void>() {
-                                @Override
-                                public void onSuccess(Void aVoid) {
-                                    Toast.makeText(RegisterActivity.this, "Verification Email Has been Sent.", Toast.LENGTH_SHORT).show();
-                                }
-                            }).addOnFailureListener(new OnFailureListener() {
-                                @Override
-                                public void onFailure(@NonNull Exception e) {
-                                    Log.d(TAG, "onFailure: Email not sent " + e.getMessage());
+                    Toast.makeText(RegisterActivity.this, "User Created.", Toast.LENGTH_SHORT).show();
+                    userID = mAuth.getCurrentUser().getUid();
+                    FirebaseUser users = FirebaseAuth.getInstance().getCurrentUser();
+                    UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
+                            .setDisplayName(Username)
+                            .build();
+                    users.updateProfile(profileUpdates)
+                            .addOnCompleteListener(task1 -> {
+                                if (task1.isSuccessful()) {
+                                    Log.d(TAG, "User profile updated.");
                                 }
                             });
 
-                            Toast.makeText(RegisterActivity.this, "User Created.", Toast.LENGTH_SHORT).show();
-                            userID = mAuth.getCurrentUser().getUid();
-                            FirebaseUser users = FirebaseAuth.getInstance().getCurrentUser();
-                            UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
-                                    .setDisplayName(Username)
-                                    .build();
-                            users.updateProfile(profileUpdates)
-                                    .addOnCompleteListener(new OnCompleteListener<Void>() {
-                                        @Override
-                                        public void onComplete(@NonNull Task<Void> task) {
-                                            if (task.isSuccessful()) {
-                                                Log.d(TAG, "User profile updated.");
-                                            }
-                                        }
-                                    });
 
+                    startActivity(new Intent(getApplicationContext(), MainActivity.class));
 
-                            startActivity(new Intent(getApplicationContext(), MainActivity.class));
+                } else {
+                    Toast.makeText(RegisterActivity.this, "Error ! " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
 
-                        } else {
-                            Toast.makeText(RegisterActivity.this, "Error ! " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
-
-                        }
-                    }
-                });
-            }
+                }
+            });
         });
 
 
