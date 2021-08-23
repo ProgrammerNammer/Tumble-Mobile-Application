@@ -15,7 +15,13 @@ public class Player {
     }
 
     public boolean isUniqueValidWord(String validWord) {
-        return !validWordsSubmitted.contains(validWord);
+        for (String word : validWordsSubmitted) {
+            if (word.equalsIgnoreCase(validWord)) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     public void clearDiceCurrentlySelected() {

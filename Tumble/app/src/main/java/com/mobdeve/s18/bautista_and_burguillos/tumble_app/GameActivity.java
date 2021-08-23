@@ -206,12 +206,13 @@ public class GameActivity extends AppCompatActivity {
 
     private boolean isValidWord(String wordFormed) {
         CallBackTask task = new CallBackTask();
+
         try {
             boolean result = false;
             if (memoizeWordResults.containsKey(wordFormed)) {
                 result = memoizeWordResults.get(wordFormed);
             } else {
-                result = task.execute(inflections(wordFormed)).get().equals("404");
+                result = !task.execute(inflections(wordFormed)).get().equals("404");
                 memoizeWordResults.put(wordFormed, result);
             }
 
