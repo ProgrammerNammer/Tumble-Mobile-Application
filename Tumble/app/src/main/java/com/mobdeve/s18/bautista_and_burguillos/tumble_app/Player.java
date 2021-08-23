@@ -15,15 +15,7 @@ public class Player {
     }
 
     public boolean isUniqueValidWord(String validWord) {
-        //  TODO: Apply trie algorithm, this is just temporary
-
-        for (String word : validWordsSubmitted) {
-            if (word.equalsIgnoreCase(validWord)) {
-                return false;
-            }
-        }
-
-        return true;
+        return !validWordsSubmitted.contains(validWord);
     }
 
     public void clearDiceCurrentlySelected() {

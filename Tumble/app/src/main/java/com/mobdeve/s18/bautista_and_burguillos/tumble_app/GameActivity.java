@@ -53,9 +53,9 @@ public class GameActivity extends AppCompatActivity {
     private ArrayList<ArrayList<LetterDie>> letterDiceGrid;
     private LetterDiceGenerator letterDiceGenerator;
     private ArrayList<LetterDieAdapter> letterDieAdapters;
+    private Map<String, Boolean> memoizeWordResults;
     private Player player;
     private int progress;
-    private String isWord;
 
     //  TODO: Cleanup, progress bar still going even after finish
     @Override
@@ -78,6 +78,7 @@ public class GameActivity extends AppCompatActivity {
         letterDiceGenerator = new LetterDiceGenerator(this);
         letterDiceGrid = new ArrayList<>();
         letterDieAdapters = new ArrayList<>();
+        memoizeWordResults = new HashMap<>();
         player = new Player();
 
         this.btn_new_game.setOnClickListener(view -> {
@@ -188,7 +189,6 @@ public class GameActivity extends AppCompatActivity {
         //  TODO: Connect w/ Scoring System
         String wordFormed = tv_word_formed.getText().toString();
 
-        //  example: if (validWord() && player.isUniqueValidWord) {player.addValidWord()}
         if (wordFormed.length() <= 2) {
             Toast.makeText(GameActivity.this, "Words can not be less than 2 letters.", Toast.LENGTH_SHORT).show();
         } else if (!player.isUniqueValidWord(wordFormed)) {
@@ -207,7 +207,15 @@ public class GameActivity extends AppCompatActivity {
     private boolean isValidWord(String wordFormed) {
         CallBackTask task = new CallBackTask();
         try {
-            return task.execute(inflections(wordFormed)).get().equals("404");
+            boolean result = false;
+            if (memoizeWordResults.containsKey(wordFormed)) {
+                result = memoizeWordResults.get(wordFormed);
+            } else {
+                result = task.execute(inflections(wordFormed)).get().equals("404");
+                memoizeWordResults.put(wordFormed, result);
+            }
+
+            return result;
         } catch (ExecutionException | InterruptedException e) {
             e.printStackTrace();
         }
@@ -249,16 +257,10 @@ public class GameActivity extends AppCompatActivity {
     }
 
     private boolean isPressingOverThisView(View view, int rawX, int rawY) {
-        final int AREA_DECREASE = 100;
         Rect rect = new Rect();
         int[] location = new int[2];
 
         view.getDrawingRect(rect);
-
-//        rect.top -= AREA_DECREASE;
-//        rect.left -= AREA_DECREASE;
-//        rect.bottom -= AREA_DECREASE;
-//        rect.right -= AREA_DECREASE;
 
         view.getLocationOnScreen(location);
         rect.offset(location[0], location[1]);
@@ -303,7 +305,8 @@ public class GameActivity extends AppCompatActivity {
             System.out.println("onPostExecute: " + result);
         }
     }
-    private void gameOver(String score){
+
+    private void gameOver(String score) {
 
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         Map<String, Object> user = new HashMap<>();
