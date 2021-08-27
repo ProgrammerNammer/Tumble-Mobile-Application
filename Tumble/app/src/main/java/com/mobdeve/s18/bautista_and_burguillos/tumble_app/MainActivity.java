@@ -29,35 +29,23 @@ public class MainActivity extends AppCompatActivity {
         my_leaderboard = findViewById(R.id.appCompatButton4);
         exitButton = findViewById(R.id.exitButton);
 
-        new_game.setOnClickListener(new View.OnClickListener() {
-            @Override
-
-            public void onClick(View view) {
-                Intent i = new Intent(view.getContext(), GameActivity.class);
-                startActivity(i);
-            }
+        new_game.setOnClickListener(view -> {
+            Intent i = new Intent(view.getContext(), GameActivity.class);
+            startActivity(i);
         });
 
-        my_leaderboard.setOnClickListener(new View.OnClickListener() {
-            @Override
-
-            public void onClick(View view) {
-                Intent i = new Intent(view.getContext(), ScoreboardActivity.class);
-                startActivity(i);
-            }
+        my_leaderboard.setOnClickListener(view -> {
+            Intent i = new Intent(view.getContext(), ScoreboardActivity.class);
+            startActivity(i);
         });
 
-        exitButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-
-            public void onClick(View view) {
+        exitButton.setOnClickListener(view -> {
                 finishAndRemoveTask();
-                FirebaseAuth.getInstance().signOut();
-                Intent i=new Intent(view.getContext(), LoginActivity.class);
-                i.putExtra("finish", true);
-                i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP); // To clean up all activities
-                startActivity(i);
-            }
+            FirebaseAuth.getInstance().signOut();
+            Intent i=new Intent(view.getContext(), LoginActivity.class);
+            i.putExtra("finish", true);
+            i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP); // To clean up all activities
+            startActivity(i);
         });
 
     }
