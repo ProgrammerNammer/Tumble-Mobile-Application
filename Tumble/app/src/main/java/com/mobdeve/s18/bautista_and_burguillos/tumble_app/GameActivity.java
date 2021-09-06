@@ -12,6 +12,8 @@ import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
@@ -59,6 +61,7 @@ public class GameActivity extends AppCompatActivity {
     private Player player;
     private ScoreSystem scoreSystem;
     private int progress;
+    private boolean hasSubmittedWord = false;
 
     //  TODO: Cleanup, progress bar still going even after finish
     @Override
@@ -175,6 +178,12 @@ public class GameActivity extends AppCompatActivity {
                 case MotionEvent.ACTION_MOVE:
                 case MotionEvent.ACTION_DOWN:
                 case MotionEvent.ACTION_POINTER_DOWN: {
+                    if (hasSubmittedWord) {
+                        tv_word_formed.setText("");
+                        tv_score_formed.setText("");
+                        hasSubmittedWord = false;
+                    }
+
                     handleDiceSelect((int) event.getRawX(), (int) event.getRawY());
                 }
                 break;
@@ -197,10 +206,12 @@ public class GameActivity extends AppCompatActivity {
         //  TODO: Connect w/ Scoring System
         String WORD_FORMED = tv_word_formed.getText().toString();
 
+        tv_score_formed.setVisibility(View.VISIBLE);
+
         if (WORD_FORMED.length() <= 2) {
-            Toast.makeText(GameActivity.this, "Words can not be less than 2 letters.", Toast.LENGTH_SHORT).show();
+            tv_score_formed.setText(getResources().getString(R.string.score_status_too_short));
         } else if (!player.isUniqueValidWord(WORD_FORMED)) {
-            Toast.makeText(GameActivity.this, "You have already submitted this word.", Toast.LENGTH_SHORT).show();
+            tv_score_formed.setText(getResources().getString(R.string.score_status_already_submitted));
         } else if (isValidWord(WORD_FORMED)) {
             //  Only valid option
             final int SCORE = scoreSystem.convertToScore(WORD_FORMED);
@@ -212,12 +223,27 @@ public class GameActivity extends AppCompatActivity {
             tv_total_score.setText(player.getScoreString());
             tv_score_formed.setText("+ " + SCORE_STRING);
 
-            Toast.makeText(GameActivity.this, "Insert Score here.", Toast.LENGTH_SHORT).show();
+
         } else {
-            Toast.makeText(GameActivity.this, "This word does not exist.", Toast.LENGTH_SHORT).show();
+            tv_score_formed.setText(getResources().getString(R.string.score_status_not_a_word));
         }
 
-        tv_word_formed.setText("");
+        new CountDownTimer(3000, 1000) {
+            @Override
+            public void onTick(long millisUntilFinished) {
+
+            }
+
+            @Override
+            public void onFinish() {
+                if (hasSubmittedWord) {
+                    tv_word_formed.setText("");
+                    tv_score_formed.setText("");
+                }
+            }
+        }.start();
+
+        hasSubmittedWord = true;
         player.clearDiceCurrentlySelected();
     }
 
