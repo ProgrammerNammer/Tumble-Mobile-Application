@@ -7,7 +7,7 @@ public class ScoreSystem {
 
     public ScoreSystem(int dieLetterDimension) {
         this.DIE_LETTER_DIMENSION = dieLetterDimension;
-        this.DEFAULT_SCORE_BASE = 100;
+        this.DEFAULT_SCORE_BASE = 10;
         this.scoreMultiplier = 5;
     }
 

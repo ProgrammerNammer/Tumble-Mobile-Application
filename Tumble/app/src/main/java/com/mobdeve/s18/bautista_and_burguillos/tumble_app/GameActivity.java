@@ -195,17 +195,18 @@ public class GameActivity extends AppCompatActivity {
 
     private void handleDiceDeselect() {
         //  TODO: Connect w/ Scoring System
-        String wordFormed = tv_word_formed.getText().toString();
+        String WORD_FORMED = tv_word_formed.getText().toString();
 
-        if (wordFormed.length() <= 2) {
+        if (WORD_FORMED.length() <= 2) {
             Toast.makeText(GameActivity.this, "Words can not be less than 2 letters.", Toast.LENGTH_SHORT).show();
-        } else if (!player.isUniqueValidWord(wordFormed)) {
+        } else if (!player.isUniqueValidWord(WORD_FORMED)) {
             Toast.makeText(GameActivity.this, "You have already submitted this word.", Toast.LENGTH_SHORT).show();
-        } else if (isValidWord(wordFormed)) {
+        } else if (isValidWord(WORD_FORMED)) {
             //  Only valid option
-            final int SCORE = scoreSystem.convertToScore(wordFormed);
+            final int SCORE = scoreSystem.convertToScore(WORD_FORMED);
             final String SCORE_STRING = Integer.toString(SCORE);
 
+            player.addValidWordSubmitted(WORD_FORMED);
             player.addScore(SCORE);
 
             tv_total_score.setText(player.getScoreString());
