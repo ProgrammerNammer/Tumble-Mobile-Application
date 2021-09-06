@@ -17,7 +17,7 @@
         android:paddingHorizontal="15dp"
         android:paddingBottom="20dp">
 
-        <TextView
+            <TextView
             android:id="@+id/tv_total_score"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

@@ -65,5 +65,7 @@ public class Player {
         return score;
     }
 
-
+    public String getScoreString() {
+        return Integer.toString(score);
+    }
 }

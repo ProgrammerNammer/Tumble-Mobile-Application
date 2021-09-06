@@ -48,6 +48,8 @@ public class GameActivity extends AppCompatActivity {
     private ProgressBar pb_progressbar_1;
     private ProgressBar pb_progressbar_2;
     private TableLayout tl_game_grid;
+    private TextView tv_score_formed;
+    private TextView tv_total_score;
     private TextView tv_word_formed;
 
     private ArrayList<ArrayList<LetterDie>> letterDiceGrid;
@@ -55,6 +57,7 @@ public class GameActivity extends AppCompatActivity {
     private ArrayList<LetterDieAdapter> letterDieAdapters;
     private Map<String, Boolean> memoizeWordResults;
     private Player player;
+    private ScoreSystem scoreSystem;
     private int progress;
 
     //  TODO: Cleanup, progress bar still going even after finish
@@ -63,16 +66,18 @@ public class GameActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game);
 
-        init();
+        initLayout();
         initTimer();
         generateGameBoard();
 
         cdt_timer.start();
     }
 
-    private void init() {
+    private void initLayout() {
         btn_new_game = findViewById(R.id.AppCompatButton);
-        tv_word_formed = (TextView) findViewById(R.id.tv_word_formed);
+        tv_score_formed = findViewById(R.id.tv_score_formed);
+        tv_total_score = findViewById(R.id.tv_total_score);
+        tv_word_formed = findViewById(R.id.tv_word_formed);
         tl_game_grid = findViewById(R.id.tl_game_grid);
 
         letterDiceGenerator = new LetterDiceGenerator(this);
@@ -80,6 +85,7 @@ public class GameActivity extends AppCompatActivity {
         letterDieAdapters = new ArrayList<>();
         memoizeWordResults = new HashMap<>();
         player = new Player();
+        scoreSystem = new ScoreSystem(DIMENSIONS);
 
         this.btn_new_game.setOnClickListener(view -> {
             Intent i = new Intent(view.getContext(), GameActivity.class);
@@ -87,17 +93,19 @@ public class GameActivity extends AppCompatActivity {
             startActivity(i);
         });
 
-        //   Clearing default value
+        //   Setting default value
+        tv_score_formed.setText("");
+        tv_total_score.setText(player.getScoreString());
         tv_word_formed.setText("");
     }
 
     private void initTimer() {
         progress = 0;
 
-        pb_progressbar_1 = (ProgressBar) findViewById(R.id.progressbar);
-        pb_progressbar_2 = (ProgressBar) findViewById(R.id.progressbar2);
-        pb_progressbar_1.setProgress(progress);
-        pb_progressbar_2.setProgress(progress);
+        this.pb_progressbar_1 = (ProgressBar) findViewById(R.id.progressbar);
+        this.pb_progressbar_2 = (ProgressBar) findViewById(R.id.progressbar2);
+        this.pb_progressbar_1.setProgress(progress);
+        this.pb_progressbar_2.setProgress(progress);
 
         //  Load the custom progress bar
         Drawable drawable = AppCompatResources.getDrawable(this, R.drawable.custom_timer);
@@ -195,6 +203,14 @@ public class GameActivity extends AppCompatActivity {
             Toast.makeText(GameActivity.this, "You have already submitted this word.", Toast.LENGTH_SHORT).show();
         } else if (isValidWord(wordFormed)) {
             //  Only valid option
+            final int SCORE = scoreSystem.convertToScore(wordFormed);
+            final String SCORE_STRING = Integer.toString(SCORE);
+
+            player.addScore(SCORE);
+
+            tv_total_score.setText(player.getScoreString());
+            tv_score_formed.setText("+ " + SCORE_STRING);
+
             Toast.makeText(GameActivity.this, "Insert Score here.", Toast.LENGTH_SHORT).show();
         } else {
             Toast.makeText(GameActivity.this, "This word does not exist.", Toast.LENGTH_SHORT).show();
