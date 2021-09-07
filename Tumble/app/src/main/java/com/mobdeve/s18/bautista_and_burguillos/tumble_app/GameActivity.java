@@ -232,6 +232,7 @@ public class GameActivity extends AppCompatActivity {
             tv_score_formed.setText(getResources().getString(R.string.score_status_not_a_word));
         }
 
+        Log.d("MyTag", "Here");
         new CountDownTimer(3000, 1000) {
             @Override
             public void onTick(long millisUntilFinished) {
@@ -254,6 +255,7 @@ public class GameActivity extends AppCompatActivity {
     private boolean isValidWord(String wordFormed) {
         CallBackTask task = new CallBackTask();
 
+        Log.d("MyTag", "API Call");
         try {
             boolean result = false;
             if (memoizeWordResults.containsKey(wordFormed)) {
@@ -289,11 +291,12 @@ public class GameActivity extends AppCompatActivity {
                             tv_word_formed.setText(currentWordText);
 
                             player.pushDiceCurrentlySelected(letterDie);
+
+                            View sample = rowChildren.getChildAt(column);
+                            sample.setBackground(getDrawable(R.drawable.letter_die_activated));
+                            selectedLetterDice.add(sample);
                         }
 
-                        View sample = rowChildren.getChildAt(column);
-                        sample.setBackground(getDrawable(R.drawable.letter_die_activated));
-                        selectedLetterDice.add(sample);
                         break;
                     }
 
