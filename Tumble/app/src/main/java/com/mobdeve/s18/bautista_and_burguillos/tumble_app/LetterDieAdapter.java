@@ -38,10 +38,7 @@ public class LetterDieAdapter extends ArrayAdapter<LetterDie> {
 
         if (letterDie != null) {
             TextView tv_die_letter = view.findViewById(R.id.tv_die_letter);
-            ConstraintLayout cl_letter_tile = view.findViewById(R.id.cl_letter_tile);
-
             tv_die_letter.setText(Character.toString(letterDie.getMyLetter()));
-            cl_letter_tile.setBackgroundResource(letterDie.isFocusedOn() ? R.drawable.letter_die_activated : R.drawable.letter_die);
         }
 
         return view;

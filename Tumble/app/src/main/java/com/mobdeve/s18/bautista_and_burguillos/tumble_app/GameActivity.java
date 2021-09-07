@@ -54,9 +54,9 @@ public class GameActivity extends AppCompatActivity {
     private TextView tv_total_score;
     private TextView tv_word_formed;
 
+    private ArrayList<View> selectedLetterDice;
     private ArrayList<ArrayList<LetterDie>> letterDiceGrid;
     private LetterDiceGenerator letterDiceGenerator;
-    private ArrayList<LetterDieAdapter> letterDieAdapters;
     private Map<String, Boolean> memoizeWordResults;
     private Player player;
     private ScoreSystem scoreSystem;
@@ -85,9 +85,9 @@ public class GameActivity extends AppCompatActivity {
 
         letterDiceGenerator = new LetterDiceGenerator(this);
         letterDiceGrid = new ArrayList<>();
-        letterDieAdapters = new ArrayList<>();
         memoizeWordResults = new HashMap<>();
         player = new Player();
+        selectedLetterDice = new ArrayList<>();
         scoreSystem = new ScoreSystem(DIMENSIONS);
 
         this.btn_new_game.setOnClickListener(view -> {
@@ -144,7 +144,6 @@ public class GameActivity extends AppCompatActivity {
         for (int row = 0; row < letterDiceGrid.size(); row++) {
             LetterDieAdapter letterDieAdapter = new LetterDieAdapter(this, R.layout.letter_die_item, letterDiceGrid.get(row));
             LinearLayout tableRow = new LinearLayout(this);
-            letterDieAdapters.add(letterDieAdapter);
 
             tableRow.post(
                     () -> {
@@ -203,10 +202,15 @@ public class GameActivity extends AppCompatActivity {
     }
 
     private void handleDiceDeselect() {
-        //  TODO: Connect w/ Scoring System
         String WORD_FORMED = tv_word_formed.getText().toString();
 
         tv_score_formed.setVisibility(View.VISIBLE);
+
+        for (View letterDie : selectedLetterDice) {
+            letterDie.setBackground(getDrawable(R.drawable.letter_die));
+        }
+
+        selectedLetterDice.clear();
 
         if (WORD_FORMED.length() <= 2) {
             tv_score_formed.setText(getResources().getString(R.string.score_status_too_short));
@@ -268,13 +272,13 @@ public class GameActivity extends AppCompatActivity {
     }
 
     public void handleDiceSelect(final int RAW_X, final int RAW_Y) {
-        for (int i = 0; i < tl_game_grid.getChildCount(); i++) {
-            if (isPressingOverThisView(tl_game_grid.getChildAt(i), RAW_X, RAW_Y)) {
-                LinearLayout rowChildren = (LinearLayout) tl_game_grid.getChildAt(i);
+        for (int row = 0; row < tl_game_grid.getChildCount(); row++) {
+            if (isPressingOverThisView(tl_game_grid.getChildAt(row), RAW_X, RAW_Y)) {
+                LinearLayout rowChildren = (LinearLayout) tl_game_grid.getChildAt(row);
 
-                for (int j = 0; j < rowChildren.getChildCount(); j++) {
-                    if (isPressingOverThisView(rowChildren.getChildAt(j).findViewById(R.id.iv_hitbox), RAW_X, RAW_Y)) {
-                        LetterDie letterDie = letterDiceGrid.get(i).get(j);
+                for (int column = 0; column < rowChildren.getChildCount(); column++) {
+                    if (isPressingOverThisView(rowChildren.getChildAt(column).findViewById(R.id.iv_hitbox), RAW_X, RAW_Y)) {
+                        LetterDie letterDie = letterDiceGrid.get(row).get(column);
                         String stringLetterTile = Character.toString(letterDie.getMyLetter());
                         String currentWordText = tv_word_formed.getText().toString();
 
@@ -287,9 +291,9 @@ public class GameActivity extends AppCompatActivity {
                             player.pushDiceCurrentlySelected(letterDie);
                         }
 
-                        //  TODO: Connect to custom adapter
-                        // letterDiceGrid.get(i).get(j).setFocusedOn(true);
-                        // letterDieAdapters.get(i).notifyDataSetChanged();
+                        View sample = rowChildren.getChildAt(column);
+                        sample.setBackground(getDrawable(R.drawable.letter_die_activated));
+                        selectedLetterDice.add(sample);
                         break;
                     }
 
