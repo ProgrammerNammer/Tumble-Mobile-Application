@@ -12,43 +12,38 @@ import androidx.annotation.NonNull;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class LetterDieAdapter extends ArrayAdapter<LetterDie> {
-    private ArrayList<LetterDie> letterDieRow;
+    private Context myContext;
+    private int resourceLayout;
 
-    public LetterDieAdapter(Context context, ArrayList<LetterDie> letterDieRow) {
-        super(context, 0, letterDieRow);
-
-        this.letterDieRow = letterDieRow;
+    public LetterDieAdapter(Context context, int resourceLayout, List<LetterDie> letterDieRow) {
+        super(context, resourceLayout, letterDieRow);
+        this.resourceLayout = resourceLayout;
+        this.myContext = context;
     }
 
     @NonNull
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        ViewHolder viewHolder;
-        LetterDie letterDie = letterDieRow.get(position);
+        View view = convertView;
 
-        if (convertView == null) {
-            convertView = LayoutInflater.from(getContext()).inflate(R.layout.letter_die_item, parent, false);
-            viewHolder = new ViewHolder();
-
-            viewHolder.tv_letter = convertView.findViewById(R.id.tv_die_letter);
-            viewHolder.tv_letter.setText(Character.toString(letterDie.getMyLetter()));
-
-            //  TODO: Hover/Drag selection
-            viewHolder.cl_letter_tile = convertView.findViewById(R.id.cl_letter_tile);
-            viewHolder.cl_letter_tile.setBackgroundResource(letterDie.isFocusedOn() ? R.drawable.letter_die_activated : R.drawable.letter_die);
-
-            convertView.setTag(viewHolder);
-        } else {
-            viewHolder = (ViewHolder) convertView.getTag();
+        if (view == null) {
+            LayoutInflater layoutInflater = LayoutInflater.from(myContext);
+            view = layoutInflater.inflate(resourceLayout, parent, false);
         }
 
-        return convertView;
-    }
+        LetterDie letterDie = getItem(position);
 
-    static class ViewHolder {
-        TextView tv_letter;
-        ConstraintLayout cl_letter_tile;
+        if (letterDie != null) {
+            TextView tv_die_letter = view.findViewById(R.id.tv_die_letter);
+            ConstraintLayout cl_letter_tile = view.findViewById(R.id.cl_letter_tile);
+
+            tv_die_letter.setText(letterDie.getMyLetter());
+            cl_letter_tile.setBackgroundResource(letterDie.isFocusedOn() ? R.drawable.letter_die_activated : R.drawable.letter_die);
+        }
+
+        return view;
     }
 }
