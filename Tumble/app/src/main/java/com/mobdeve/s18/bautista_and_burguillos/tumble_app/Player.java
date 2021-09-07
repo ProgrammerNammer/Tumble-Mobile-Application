@@ -1,6 +1,7 @@
 package com.mobdeve.s18.bautista_and_burguillos.tumble_app;
 
 import java.util.ArrayList;
+import java.util.EmptyStackException;
 import java.util.Stack;
 
 public class Player {
@@ -37,7 +38,11 @@ public class Player {
     }
 
     public LetterDie peekDiceCurrentlySelected() {
-        return diceCurrentlySelected.peek();
+        try {
+            return diceCurrentlySelected.peek();
+        } catch (EmptyStackException error) {
+            return null;
+        }
     }
 
     public boolean isEmptyDiceCurrentlySelected() {

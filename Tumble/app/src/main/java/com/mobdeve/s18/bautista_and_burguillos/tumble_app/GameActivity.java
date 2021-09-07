@@ -275,7 +275,8 @@ public class GameActivity extends AppCompatActivity {
                 LinearLayout rowChildren = (LinearLayout) tl_game_grid.getChildAt(row);
 
                 for (int column = 0; column < rowChildren.getChildCount(); column++) {
-                    if (isPressingOverThisView(rowChildren.getChildAt(column).findViewById(R.id.iv_hitbox), RAW_X, RAW_Y)) {
+                    if (isPressingOverThisView(rowChildren.getChildAt(column).findViewById(R.id.iv_hitbox), RAW_X, RAW_Y) ||
+                            (player.peekDiceCurrentlySelected() == null && isPressingOverThisView(rowChildren.getChildAt(column).findViewById(R.id.cl_letter_tile), RAW_X, RAW_Y))) {
                         LetterDie letterDie = letterDiceGrid.get(row).get(column);
                         String stringLetterTile = Character.toString(letterDie.getMyLetter());
                         String currentWordText = tv_word_formed.getText().toString();
