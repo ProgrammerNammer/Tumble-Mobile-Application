@@ -61,7 +61,7 @@ public class GameActivity extends AppCompatActivity {
     private Player player;
     private ScoreSystem scoreSystem;
     private int progress;
-    private boolean hasSubmittedWord = false;
+    private CountDownTimer fadeAnimation;
 
     //  TODO: Cleanup, progress bar still going even after finish
     @Override
@@ -177,10 +177,11 @@ public class GameActivity extends AppCompatActivity {
                 case MotionEvent.ACTION_MOVE:
                 case MotionEvent.ACTION_DOWN:
                 case MotionEvent.ACTION_POINTER_DOWN: {
-                    if (hasSubmittedWord) {
+                    if (fadeAnimation != null) {
                         tv_word_formed.setText("");
                         tv_score_formed.setText("");
-                        hasSubmittedWord = false;
+                        fadeAnimation.cancel();
+                        fadeAnimation = null;
                     }
 
                     handleDiceSelect((int) event.getRawX(), (int) event.getRawY());
@@ -232,8 +233,7 @@ public class GameActivity extends AppCompatActivity {
             tv_score_formed.setText(getResources().getString(R.string.score_status_not_a_word));
         }
 
-        Log.d("MyTag", "Here");
-        new CountDownTimer(3000, 1000) {
+        fadeAnimation = new CountDownTimer(3000, 1000) {
             @Override
             public void onTick(long millisUntilFinished) {
 
@@ -241,21 +241,17 @@ public class GameActivity extends AppCompatActivity {
 
             @Override
             public void onFinish() {
-                if (hasSubmittedWord) {
-                    tv_word_formed.setText("");
-                    tv_score_formed.setText("");
-                }
+                tv_word_formed.setText("");
+                tv_score_formed.setText("");
             }
         }.start();
 
-        hasSubmittedWord = true;
         player.clearDiceCurrentlySelected();
     }
 
     private boolean isValidWord(String wordFormed) {
         CallBackTask task = new CallBackTask();
 
-        Log.d("MyTag", "API Call");
         try {
             boolean result = false;
             if (memoizeWordResults.containsKey(wordFormed)) {
