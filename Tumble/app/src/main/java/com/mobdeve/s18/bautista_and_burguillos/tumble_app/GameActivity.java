@@ -142,7 +142,7 @@ public class GameActivity extends AppCompatActivity {
 
         //  Now, render the board's contents
         for (int row = 0; row < letterDiceGrid.size(); row++) {
-            LetterDieAdapter letterDieAdapter = new LetterDieAdapter(this, letterDiceGrid.get(row));
+            LetterDieAdapter letterDieAdapter = new LetterDieAdapter(this, R.layout.letter_die_item, letterDiceGrid.get(row));
             LinearLayout tableRow = new LinearLayout(this);
             letterDieAdapters.add(letterDieAdapter);
 
