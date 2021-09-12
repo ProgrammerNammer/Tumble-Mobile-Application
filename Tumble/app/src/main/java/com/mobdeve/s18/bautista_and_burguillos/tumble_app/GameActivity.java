@@ -374,7 +374,6 @@ public class GameActivity extends AppCompatActivity {
     }
 
     private void gameOver(String score) {
-
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         Map<String, Object> user = new HashMap<>();
         user.put("username", FirebaseAuth.getInstance().getCurrentUser().getDisplayName());
