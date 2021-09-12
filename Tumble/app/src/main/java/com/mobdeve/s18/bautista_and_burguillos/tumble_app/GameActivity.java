@@ -92,12 +92,16 @@ public class GameActivity extends AppCompatActivity {
         this.btn_new_game.setOnClickListener(view -> {
             Intent i = new Intent(view.getContext(), GameActivity.class);
 
+            cdt_timer.cancel();
+            
             finish();
             startActivity(i);
         });
 
         this.btn_exit_game_activity.setOnClickListener(view -> {
             Intent i = new Intent(view.getContext(), MainActivity.class);
+
+            cdt_timer.cancel();
 
             finish();
             startActivity(i);
