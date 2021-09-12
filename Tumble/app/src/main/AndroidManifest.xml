@@ -32,6 +32,12 @@
             android:theme="@style/Theme.AppCompat.DayNight.NoActionBar">
 
         </activity>
+        <activity
+            android:name=".GameOverActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.AppCompat.DayNight.NoActionBar">
+
+        </activity>
         <!--        Temporary disabled for Development purposes-->
         <!--        <activity   android:name=".LoginActivity"-->
         <!--            android:screenOrientation="portrait"-->

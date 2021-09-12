@@ -12,15 +12,12 @@ import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -77,7 +74,7 @@ public class GameActivity extends AppCompatActivity {
     }
 
     private void initLayout() {
-        btn_new_game = findViewById(R.id.AppCompatButton);
+        btn_new_game = findViewById(R.id.btn_new_game);
         tv_score_formed = findViewById(R.id.tv_score_formed);
         tv_total_score = findViewById(R.id.tv_total_score);
         tv_word_formed = findViewById(R.id.tv_word_formed);
@@ -92,6 +89,7 @@ public class GameActivity extends AppCompatActivity {
 
         this.btn_new_game.setOnClickListener(view -> {
             Intent i = new Intent(view.getContext(), GameActivity.class);
+
             finish();
             startActivity(i);
         });
@@ -110,17 +108,21 @@ public class GameActivity extends AppCompatActivity {
         this.pb_progressbar_1.setProgress(progress);
         this.pb_progressbar_2.setProgress(progress);
 
+        Intent i = new Intent(this, GameOverActivity.class);
+        
         //  Load the custom progress bar
         Drawable drawable = AppCompatResources.getDrawable(this, R.drawable.custom_timer);
         pb_progressbar_1.setProgressDrawable(drawable);
 
-        cdt_timer = new CountDownTimer(180000, 1000) {
+        int GAME_TIME_MILLISECONDS = 180000;
+
+        cdt_timer = new CountDownTimer(GAME_TIME_MILLISECONDS, 1000) {
             @Override
             public void onTick(long millisUntilFinished) {
                 // Log.v("Time", "Tick of Progress"+ i+ millisUntilFinished);
                 progress++;
-                pb_progressbar_1.setProgress((int) progress * 100 / (180000 / 1000));
-                pb_progressbar_2.setProgress((int) progress * 100 / (180000 / 1000));
+                pb_progressbar_1.setProgress((int) progress * 100 / (GAME_TIME_MILLISECONDS / 1000));
+                pb_progressbar_2.setProgress((int) progress * 100 / (GAME_TIME_MILLISECONDS / 1000));
             }
 
             @Override
@@ -128,6 +130,11 @@ public class GameActivity extends AppCompatActivity {
                 progress++;
                 pb_progressbar_1.setProgress(100);
                 pb_progressbar_2.setProgress(100);
+
+                i.putExtra(getResources().getString(R.string.key_final_score), player.getScore());
+
+                startActivity(i);
+                finish();
             }
         };
     }
@@ -227,7 +234,6 @@ public class GameActivity extends AppCompatActivity {
 
             tv_total_score.setText(player.getScoreString());
             tv_score_formed.setText("+ " + SCORE_STRING);
-
 
         } else {
             tv_score_formed.setText(getResources().getString(R.string.score_status_not_a_word));

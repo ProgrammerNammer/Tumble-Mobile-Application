@@ -40,9 +40,9 @@ public class MainActivity extends AppCompatActivity {
         });
 
         exitButton.setOnClickListener(view -> {
-                finishAndRemoveTask();
+            finishAndRemoveTask();
             FirebaseAuth.getInstance().signOut();
-            Intent i=new Intent(view.getContext(), LoginActivity.class);
+            Intent i = new Intent(view.getContext(), LoginActivity.class);
             i.putExtra("finish", true);
             i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP); // To clean up all activities
             startActivity(i);

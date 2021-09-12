@@ -17,7 +17,7 @@
         android:paddingHorizontal="15dp"
         android:paddingBottom="20dp">
 
-            <TextView
+        <TextView
             android:id="@+id/tv_total_score"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -128,13 +128,28 @@
         android:background="@drawable/activity_game_bottom_background"
         android:gravity="bottom"
         android:orientation="horizontal"
-        android:padding="10dp">
+        android:padding="10dp"
+        android:weightSum="10">
 
         <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/AppCompatButton"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:id="@+id/btn_exit_game_activity"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:background="@drawable/button_warning_logic"
+            android:fontFamily="@font/lato"
+            android:paddingTop="15dp"
+            android:paddingBottom="25dp"
+            android:text="Exit"
+            android:textAllCaps="false"
+            android:textColor="@color/white"
+            android:textSize="10pt" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btn_new_game"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="9"
             android:background="@drawable/button_white_logic"
             android:fontFamily="@font/lato"
             android:paddingTop="15dp"
