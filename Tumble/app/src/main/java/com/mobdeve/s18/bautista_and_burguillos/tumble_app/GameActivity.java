@@ -43,6 +43,7 @@ import javax.net.ssl.HttpsURLConnection;
 public class GameActivity extends AppCompatActivity {
     private final int DIMENSIONS = 4;
     private Button btn_new_game;
+    private Button btn_exit_game_activity;
     private CountDownTimer cdt_timer;
     private ProgressBar pb_progressbar_1;
     private ProgressBar pb_progressbar_2;
@@ -75,6 +76,7 @@ public class GameActivity extends AppCompatActivity {
 
     private void initLayout() {
         btn_new_game = findViewById(R.id.btn_new_game);
+        btn_exit_game_activity = findViewById(R.id.btn_exit_game_activity);
         tv_score_formed = findViewById(R.id.tv_score_formed);
         tv_total_score = findViewById(R.id.tv_total_score);
         tv_word_formed = findViewById(R.id.tv_word_formed);
@@ -89,6 +91,13 @@ public class GameActivity extends AppCompatActivity {
 
         this.btn_new_game.setOnClickListener(view -> {
             Intent i = new Intent(view.getContext(), GameActivity.class);
+
+            finish();
+            startActivity(i);
+        });
+
+        this.btn_exit_game_activity.setOnClickListener(view -> {
+            Intent i = new Intent(view.getContext(), MainActivity.class);
 
             finish();
             startActivity(i);
@@ -109,12 +118,12 @@ public class GameActivity extends AppCompatActivity {
         this.pb_progressbar_2.setProgress(progress);
 
         Intent i = new Intent(this, GameOverActivity.class);
-        
+
         //  Load the custom progress bar
         Drawable drawable = AppCompatResources.getDrawable(this, R.drawable.custom_timer);
         pb_progressbar_1.setProgressDrawable(drawable);
 
-        int GAME_TIME_MILLISECONDS = 180000;
+        int GAME_TIME_MILLISECONDS = 10000;
 
         cdt_timer = new CountDownTimer(GAME_TIME_MILLISECONDS, 1000) {
             @Override

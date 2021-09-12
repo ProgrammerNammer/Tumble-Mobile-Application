@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/black"
-    android:paddingVertical="150dp">
+    android:paddingTop="100dp">
 
     <TextView
         android:id="@+id/textView3"
@@ -33,5 +33,47 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView3" />
+
+    <LinearLayout
+        android:id="@+id/linearLayoutCompat4"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
+        android:padding="10dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tv_final_score">
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btn_game_over_new_game"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/button_white_logic"
+            android:fontFamily="@font/lato"
+            android:paddingTop="15dp"
+            android:paddingBottom="25dp"
+            android:text="@string/new_game"
+            android:textAllCaps="false"
+            android:textFontWeight="600"
+            android:textSize="10pt" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btn_game_over_exit_game_activity"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/button_warning_logic"
+            android:fontFamily="@font/lato"
+            android:paddingTop="15dp"
+            android:paddingBottom="25dp"
+            android:text="Exit"
+            android:textAllCaps="false"
+            android:textColor="@color/white"
+            android:textSize="10pt" />
+
+    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
