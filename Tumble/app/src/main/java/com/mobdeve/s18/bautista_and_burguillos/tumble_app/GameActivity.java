@@ -71,7 +71,7 @@ public class GameActivity extends AppCompatActivity {
         initTimer();
         generateGameBoard();
 
-        cdt_timer.start();
+         cdt_timer.start();
     }
 
     private void initLayout() {
@@ -176,12 +176,13 @@ public class GameActivity extends AppCompatActivity {
 
             for (int column = 0; column < letterDiceGrid.size(); column++) {
                 View view = letterDieAdapter.getView(column, null, (ViewGroup) getWindow().getDecorView().getRootView());
+                view.setVisibility(View.INVISIBLE);
                 view.post(
                         () -> {
                             TableRow.LayoutParams layoutParams = new TableRow.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT, 1f);
                             layoutParams.setMargins(30, 30, 30, 30);
-
                             view.setLayoutParams(layoutParams);
+                            view.setVisibility(View.VISIBLE);
                         }
                 );
 
