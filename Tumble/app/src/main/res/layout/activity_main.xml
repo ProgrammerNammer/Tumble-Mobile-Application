@@ -48,6 +48,7 @@
             android:paddingTop="20dp"
             android:paddingBottom="30dp"
             android:text="@string/new_game"
+            android:textColor="@color/black"
             android:textAllCaps="false"
             android:textFontWeight="600"
             android:textSize="12pt"
@@ -56,6 +57,7 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <androidx.appcompat.widget.AppCompatButton
+            android:textColor="@color/black"
             android:id="@+id/appCompatButton4"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
