@@ -8,13 +8,16 @@ public class Player {
     private final ArrayList<String> validWordsSubmitted;
     private final Stack<LetterDie> diceCurrentlySelected;
     private int score;
-    private int powerup_prog;
-    private boolean powerup_available;
+    private int powerUpActivationTreshold;
+    private int powerUpProgress;
+    private boolean isPowerUpAvailable;
+
     public Player() {
         this.score = 0;
-        this.powerup_prog=0;
-        validWordsSubmitted = new ArrayList<>();
-        diceCurrentlySelected = new Stack<>();
+        this.powerUpProgress = 0;
+        this.powerUpActivationTreshold = 500;
+        this.validWordsSubmitted = new ArrayList<>();
+        this.diceCurrentlySelected = new Stack<>();
     }
 
     public boolean isUniqueValidWord(String validWord) {
@@ -55,7 +58,6 @@ public class Player {
         return diceCurrentlySelected.isEmpty() || diceCurrentlySelected.contains(letterDie);
     }
 
-
     public void addValidWordSubmitted(String validWord) {
         this.validWordsSubmitted.add(validWord);
     }
@@ -76,20 +78,23 @@ public class Player {
         return Integer.toString(score);
     }
 
-    public int getPowerup_prog(){return powerup_prog;}
+    public int getPowerUpProgress() {
+        return powerUpProgress;
+    }
 
-    public void setPowerup_prog(int p){
-        powerup_prog += p;
-        if (powerup_prog > 500  ){
-            setPowerupAvail(true);
-            powerup_prog -= 500;
+    public void setPowerUpProgress(int p) {
+        this.powerUpProgress += p;
+        if (powerUpProgress >= powerUpActivationTreshold) {
+            setPowerUpAvailable(true);
+            this.powerUpProgress = 0;
         }
+    }
 
+    public void setPowerUpAvailable(boolean b) {
+        isPowerUpAvailable = b;
     }
-    public void setPowerupAvail(boolean b){
-        powerup_available = b;
-    }
-    public boolean getPowerupAvail(){
-        return powerup_available;
+
+    public boolean getPowerUpAvailable() {
+        return isPowerUpAvailable;
     }
 }

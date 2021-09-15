@@ -4,9 +4,11 @@ import android.annotation.SuppressLint;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 
+import android.graphics.drawable.GradientDrawable;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -34,6 +36,7 @@ import androidx.appcompat.content.res.AppCompatResources;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.common.primitives.Ints;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -56,13 +59,13 @@ public class GameActivity extends AppCompatActivity {
     private Button btn_new_game;
     private Button btn_exit_game_activity;
     private CountDownTimer cdt_timer;
-    private ProgressBar pb_progressbar_1;
-    private ProgressBar pb_progressbar_2;
+    private ProgressBar pb_left_wing;
+    private ProgressBar pb_right_wing;
+    private ProgressBar pb_power_up;
     private TableLayout tl_game_grid;
     private TextView tv_score_formed;
     private TextView tv_total_score;
     private TextView tv_word_formed;
-    private TextView powerup_progress;
 
     private ArrayList<View> selectedLetterDice;
     private ArrayList<ArrayList<LetterDie>> letterDiceGrid;
@@ -70,7 +73,7 @@ public class GameActivity extends AppCompatActivity {
     private Map<String, Boolean> memoizeWordResults;
     private Player player;
     private ScoreSystem scoreSystem;
-    private int progress;
+    private int timer;
     private CountDownTimer fadeAnimation;
 
     private float mAccel; // acceleration apart from gravity
@@ -85,9 +88,9 @@ public class GameActivity extends AppCompatActivity {
         setContentView(R.layout.activity_game);
         mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         mSensorManager.registerListener(mSensorListener, mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER), SensorManager.SENSOR_DELAY_NORMAL);
-        mAccel = 0.00f;
         mAccelCurrent = SensorManager.GRAVITY_EARTH;
         mAccelLast = SensorManager.GRAVITY_EARTH;
+        mAccel = 0.00f;
 
         initLayout();
         initTimer();
@@ -106,15 +109,26 @@ public class GameActivity extends AppCompatActivity {
             mAccelCurrent = (float) Math.sqrt((double) (x * x + y * y + z * z));
             float delta = mAccelCurrent - mAccelLast;
             mAccel = mAccel * 0.9f + delta; // perform low-cut filter
-            if (mAccel > 12) {
-                if (player.getPowerupAvail()) {
-                    Toast toast = Toast.makeText(getApplicationContext(), "Powerup Activated!", Toast.LENGTH_LONG);
+
+            // if (mAccel > 12) {
+            if (mAccel > 1) {
+                if (player.getPowerUpAvailable()) {
+                    Toast toast = Toast.makeText(getApplicationContext(), "Power Up Activated!", Toast.LENGTH_LONG);
                     toast.show();
-                    player.setPowerupAvail(false);
+                    player.setPowerUpAvailable(false);
+
+                    GradientDrawable border = new GradientDrawable();
+                    border.setColor(Color.BLACK);
+                    border.setStroke(100, Color.BLACK);
+
+                    RelativeLayout rl_game = findViewById(R.id.rl_game);
+                    rl_game.setBackground(border);
+                    updatePowerUpStatus();
                 }
             }
         }
 
+        @Override
         public void onAccuracyChanged(Sensor sensor, int accuracy) {
         }
     };
@@ -138,7 +152,6 @@ public class GameActivity extends AppCompatActivity {
         tv_total_score = findViewById(R.id.tv_total_score);
         tv_word_formed = findViewById(R.id.tv_word_formed);
         tl_game_grid = findViewById(R.id.tl_game_grid);
-        powerup_progress = findViewById(R.id.powerup_progress);
         letterDiceGenerator = new LetterDiceGenerator(this);
         letterDiceGrid = new ArrayList<>();
         memoizeWordResults = new HashMap<>();
@@ -171,20 +184,17 @@ public class GameActivity extends AppCompatActivity {
     }
 
     private void initTimer() {
-        progress = 0;
+        timer = 0;
 
-        this.pb_progressbar_1 = (ProgressBar) findViewById(R.id.progressbar);
-        this.pb_progressbar_2 = (ProgressBar) findViewById(R.id.progressbar2);
-        this.pb_progressbar_1.setProgress(progress);
-        this.pb_progressbar_2.setProgress(progress);
+        this.pb_left_wing = findViewById(R.id.pb_left_wing);
+        this.pb_right_wing = findViewById(R.id.pb_right_wing);
+        this.pb_power_up = findViewById(R.id.pb_power_up);
+
+        this.pb_left_wing.setProgress(timer);
+        this.pb_right_wing.setProgress(timer);
+        updatePowerUpStatus();
 
         Intent i = new Intent(this, GameOverActivity.class);
-
-        //  Load the custom progress bar
-        Drawable drawable = AppCompatResources.getDrawable(this, R.drawable.custom_timer);
-        pb_progressbar_1.setProgressDrawable(drawable);
-        pb_progressbar_1.setMax(100);
-        pb_progressbar_2.setMax(100);
 
         int GAME_TIME_MILLISECONDS = 180000;
 
@@ -192,16 +202,16 @@ public class GameActivity extends AppCompatActivity {
             @Override
             public void onTick(long millisUntilFinished) {
                 // Log.v("Time", "Tick of Progress"+ i+ millisUntilFinished);
-                progress++;
-                pb_progressbar_1.setProgress((int) progress * 100 / (GAME_TIME_MILLISECONDS / 1000));
-                pb_progressbar_2.setProgress((int) progress * 100 / (GAME_TIME_MILLISECONDS / 1000));
+                timer++;
+                pb_left_wing.setProgress(timer * 100 / (GAME_TIME_MILLISECONDS / 1000));
+                pb_right_wing.setProgress(timer * 100 / (GAME_TIME_MILLISECONDS / 1000));
             }
 
             @Override
             public void onFinish() {
-                progress++;
-                pb_progressbar_1.setProgress(100);
-                pb_progressbar_2.setProgress(100);
+                timer++;
+                pb_left_wing.setProgress(100);
+                pb_right_wing.setProgress(100);
 
                 i.putExtra(getResources().getString(R.string.key_final_score), player.getScore());
 
@@ -211,6 +221,13 @@ public class GameActivity extends AppCompatActivity {
         };
     }
 
+    private void updatePowerUpStatus() {
+        double playerProgress = player.getPowerUpProgress() / 500.0;
+
+        playerProgress = playerProgress > 1 ? 1 : playerProgress < 0 ? 0 : playerProgress;
+
+        pb_power_up.setProgress((int) (100 - playerProgress * 100));
+    }
 
     @SuppressLint("ClickableViewAccessibility")
     private void generateGameBoard() {
@@ -313,10 +330,10 @@ public class GameActivity extends AppCompatActivity {
 
             player.addValidWordSubmitted(WORD_FORMED);
             player.addScore(SCORE);
-            player.setPowerup_prog(SCORE);
-            powerup_progress.setText(Integer.toString(player.getPowerup_prog()));
+            player.setPowerUpProgress(SCORE);
             tv_total_score.setText(player.getScoreString());
             tv_score_formed.setText("+ " + SCORE_STRING);
+            updatePowerUpStatus();
 
         } else {
             tv_score_formed.setText(getResources().getString(R.string.score_status_not_a_word));
