@@ -101,14 +101,18 @@ public class GameActivity extends AppCompatActivity  {
     private final SensorEventListener mSensorListener = new SensorEventListener() {
 
         public void onSensorChanged(SensorEvent se) {
+
             float x = se.values[0];
             float y = se.values[1];
             float z = se.values[2];
+
             mAccelLast = mAccelCurrent;
             mAccelCurrent = (float) Math.sqrt((double) (x*x + y*y + z*z));
             float delta = mAccelCurrent - mAccelLast;
-            mAccel = mAccel * 0.5f + delta; // perform low-cut filter
-            if (mAccel > 12) {
+            mAccel = mAccel * 0.9f + delta; // perform low-cut filter
+
+            if (mAccel > 6) {
+                Log.d("shake", "shake");
                 if(player.getPowerupAvail()) {
 
                     player.setPowerupAvail(false);
@@ -249,7 +253,7 @@ public class GameActivity extends AppCompatActivity  {
                 pb_progressbar_2.setProgress(100);
 
                 i.putExtra(getResources().getString(R.string.key_final_score), player.getScore());
-                gameOver(Integer.toString(player.getScore()));
+                //gameOver(Integer.toString(player.getScore()));
                 startActivity(i);
                 finish();
             }
