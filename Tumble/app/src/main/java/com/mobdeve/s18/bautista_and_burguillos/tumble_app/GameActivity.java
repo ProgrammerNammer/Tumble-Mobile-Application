@@ -44,6 +44,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Random;
 import java.util.concurrent.ExecutionException;
 
 import javax.net.ssl.HttpsURLConnection;
@@ -56,6 +57,7 @@ public class GameActivity extends AppCompatActivity  {
     private Button btn_new_game;
     private Button btn_exit_game_activity;
     private CountDownTimer cdt_timer;
+    private CountDownTimer cdt_timer2;
     private ProgressBar pb_progressbar_1;
     private ProgressBar pb_progressbar_2;
     private TableLayout tl_game_grid;
@@ -105,12 +107,55 @@ public class GameActivity extends AppCompatActivity  {
             mAccelLast = mAccelCurrent;
             mAccelCurrent = (float) Math.sqrt((double) (x*x + y*y + z*z));
             float delta = mAccelCurrent - mAccelLast;
-            mAccel = mAccel * 0.9f + delta; // perform low-cut filter
+            mAccel = mAccel * 0.5f + delta; // perform low-cut filter
             if (mAccel > 12) {
                 if(player.getPowerupAvail()) {
-                    Toast toast = Toast.makeText(getApplicationContext(), "Powerup Activated!", Toast.LENGTH_LONG);
-                    toast.show();
+
                     player.setPowerupAvail(false);
+                    Random rand = new Random();
+                    int upperbound = 4;
+
+                    int int_random = rand.nextInt(upperbound);
+
+                    if(int_random == 0){
+                        scoreSystem.setScoreMultiplier(10);
+                        Toast toast = Toast.makeText(getApplicationContext(), "2x SCORE!", Toast.LENGTH_LONG);
+                        toast.show();
+                        cdt_timer2 = new CountDownTimer(10000, 1000) {
+                        @Override
+                        public void onTick(long millisUntilFinished) {
+                            // Log.v("Time", "Tick of Progress"+ i+ millisUntilFinished);
+                            progress++;
+                            pb_progressbar_1.setProgress((int) progress * 100 / (10000 / 1000));
+                            pb_progressbar_2.setProgress((int) progress * 100 / (10000 / 1000));
+
+                            toast.show();
+                        }
+
+                        @Override
+                        public void onFinish() {
+                            scoreSystem.setScoreMultiplier(5);
+                        }
+                         };
+                     }
+                    else if(int_random ==1){
+                        initTimer();
+                        Toast toast = Toast.makeText(getApplicationContext(), "TIMER RESET!", Toast.LENGTH_LONG);
+                        toast.show();
+                    }
+                    else if(int_random == 2){
+                        /*
+                        TODO: REGENERATE BOARD
+                         */
+                        Toast toast = Toast.makeText(getApplicationContext(), "BOARD RESET!", Toast.LENGTH_LONG);
+                        toast.show();
+                    }
+                    else{
+                        Toast toast = Toast.makeText(getApplicationContext(), "NO POWERUP! BETTER LUCK NEXT TIME!", Toast.LENGTH_LONG);
+                        toast.show();
+                    }
+
+
                 }
             }
         }
@@ -204,7 +249,7 @@ public class GameActivity extends AppCompatActivity  {
                 pb_progressbar_2.setProgress(100);
 
                 i.putExtra(getResources().getString(R.string.key_final_score), player.getScore());
-
+                gameOver(Integer.toString(player.getScore()));
                 startActivity(i);
                 finish();
             }
