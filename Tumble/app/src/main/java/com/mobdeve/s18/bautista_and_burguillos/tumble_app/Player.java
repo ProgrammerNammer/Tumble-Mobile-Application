@@ -8,9 +8,11 @@ public class Player {
     private final ArrayList<String> validWordsSubmitted;
     private final Stack<LetterDie> diceCurrentlySelected;
     private int score;
-
+    private int powerup_prog;
+    private boolean powerup_available;
     public Player() {
         this.score = 0;
+        this.powerup_prog=0;
         validWordsSubmitted = new ArrayList<>();
         diceCurrentlySelected = new Stack<>();
     }
@@ -72,5 +74,22 @@ public class Player {
 
     public String getScoreString() {
         return Integer.toString(score);
+    }
+
+    public int getPowerup_prog(){return powerup_prog;}
+
+    public void setPowerup_prog(int p){
+        powerup_prog += p;
+        if (powerup_prog > 500  ){
+            setPowerupAvail(true);
+            powerup_prog -= 500;
+        }
+
+    }
+    public void setPowerupAvail(boolean b){
+        powerup_available = b;
+    }
+    public boolean getPowerupAvail(){
+        return powerup_available;
     }
 }

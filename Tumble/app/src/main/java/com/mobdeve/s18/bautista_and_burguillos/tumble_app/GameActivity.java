@@ -1,9 +1,16 @@
 package com.mobdeve.s18.bautista_and_burguillos.tumble_app;
 
 import android.annotation.SuppressLint;
+
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
+
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.CountDownTimer;
@@ -18,6 +25,7 @@ import android.widget.ProgressBar;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -35,12 +43,15 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.ExecutionException;
 
 import javax.net.ssl.HttpsURLConnection;
 
 
-public class GameActivity extends AppCompatActivity {
+public class GameActivity extends AppCompatActivity  {
+    private SensorManager mSensorManager;
+
     private final int DIMENSIONS = 4;
     private Button btn_new_game;
     private Button btn_exit_game_activity;
@@ -51,6 +62,7 @@ public class GameActivity extends AppCompatActivity {
     private TextView tv_score_formed;
     private TextView tv_total_score;
     private TextView tv_word_formed;
+    private TextView powerup_progress;
 
     private ArrayList<View> selectedLetterDice;
     private ArrayList<ArrayList<LetterDie>> letterDiceGrid;
@@ -61,17 +73,62 @@ public class GameActivity extends AppCompatActivity {
     private int progress;
     private CountDownTimer fadeAnimation;
 
+    private float mAccel; // acceleration apart from gravity
+    private float mAccelCurrent; // current acceleration including gravity
+    private float mAccelLast; // last acceleration including gravity
+
+
     //  TODO: Cleanup, progress bar still going even after finish
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game);
+        mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+        mSensorManager.registerListener(mSensorListener, mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER), SensorManager.SENSOR_DELAY_NORMAL);
+        mAccel = 0.00f;
+        mAccelCurrent = SensorManager.GRAVITY_EARTH;
+        mAccelLast = SensorManager.GRAVITY_EARTH;
 
         initLayout();
         initTimer();
         generateGameBoard();
 
          cdt_timer.start();
+    }
+
+    private final SensorEventListener mSensorListener = new SensorEventListener() {
+
+        public void onSensorChanged(SensorEvent se) {
+            float x = se.values[0];
+            float y = se.values[1];
+            float z = se.values[2];
+            mAccelLast = mAccelCurrent;
+            mAccelCurrent = (float) Math.sqrt((double) (x*x + y*y + z*z));
+            float delta = mAccelCurrent - mAccelLast;
+            mAccel = mAccel * 0.9f + delta; // perform low-cut filter
+            if (mAccel > 12) {
+                if(player.getPowerupAvail()) {
+                    Toast toast = Toast.makeText(getApplicationContext(), "Powerup Activated!", Toast.LENGTH_LONG);
+                    toast.show();
+                    player.setPowerupAvail(false);
+                }
+            }
+        }
+
+        public void onAccuracyChanged(Sensor sensor, int accuracy) {
+        }
+    };
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        mSensorManager.registerListener(mSensorListener, mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER), SensorManager.SENSOR_DELAY_NORMAL);
+    }
+
+    @Override
+    protected void onPause() {
+        mSensorManager.unregisterListener(mSensorListener);
+        super.onPause();
     }
 
     private void initLayout() {
@@ -81,7 +138,7 @@ public class GameActivity extends AppCompatActivity {
         tv_total_score = findViewById(R.id.tv_total_score);
         tv_word_formed = findViewById(R.id.tv_word_formed);
         tl_game_grid = findViewById(R.id.tl_game_grid);
-
+        powerup_progress=findViewById(R.id.powerup_progress);
         letterDiceGenerator = new LetterDiceGenerator(this);
         letterDiceGrid = new ArrayList<>();
         memoizeWordResults = new HashMap<>();
@@ -126,8 +183,10 @@ public class GameActivity extends AppCompatActivity {
         //  Load the custom progress bar
         Drawable drawable = AppCompatResources.getDrawable(this, R.drawable.custom_timer);
         pb_progressbar_1.setProgressDrawable(drawable);
+        pb_progressbar_1.setMax(100);
+        pb_progressbar_2.setMax(100);
 
-        int GAME_TIME_MILLISECONDS = 10000;
+        int GAME_TIME_MILLISECONDS = 30000;
 
         cdt_timer = new CountDownTimer(GAME_TIME_MILLISECONDS, 1000) {
             @Override
@@ -151,6 +210,9 @@ public class GameActivity extends AppCompatActivity {
             }
         };
     }
+
+
+
 
     @SuppressLint("ClickableViewAccessibility")
     private void generateGameBoard() {
@@ -245,7 +307,8 @@ public class GameActivity extends AppCompatActivity {
 
             player.addValidWordSubmitted(WORD_FORMED);
             player.addScore(SCORE);
-
+            player.setPowerup_prog(SCORE);
+            powerup_progress.setText(Integer.toString(player.getPowerup_prog()));
             tv_total_score.setText(player.getScoreString());
             tv_score_formed.setText("+ " + SCORE_STRING);
 
