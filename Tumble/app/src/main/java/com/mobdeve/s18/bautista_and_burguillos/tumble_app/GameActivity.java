@@ -22,6 +22,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
@@ -43,13 +44,12 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 import java.util.concurrent.ExecutionException;
 
 import javax.net.ssl.HttpsURLConnection;
 
 
-public class GameActivity extends AppCompatActivity  {
+public class GameActivity extends AppCompatActivity {
     private SensorManager mSensorManager;
 
     private final int DIMENSIONS = 4;
@@ -93,7 +93,7 @@ public class GameActivity extends AppCompatActivity  {
         initTimer();
         generateGameBoard();
 
-         cdt_timer.start();
+        cdt_timer.start();
     }
 
     private final SensorEventListener mSensorListener = new SensorEventListener() {
@@ -103,11 +103,11 @@ public class GameActivity extends AppCompatActivity  {
             float y = se.values[1];
             float z = se.values[2];
             mAccelLast = mAccelCurrent;
-            mAccelCurrent = (float) Math.sqrt((double) (x*x + y*y + z*z));
+            mAccelCurrent = (float) Math.sqrt((double) (x * x + y * y + z * z));
             float delta = mAccelCurrent - mAccelLast;
             mAccel = mAccel * 0.9f + delta; // perform low-cut filter
             if (mAccel > 12) {
-                if(player.getPowerupAvail()) {
+                if (player.getPowerupAvail()) {
                     Toast toast = Toast.makeText(getApplicationContext(), "Powerup Activated!", Toast.LENGTH_LONG);
                     toast.show();
                     player.setPowerupAvail(false);
@@ -138,7 +138,7 @@ public class GameActivity extends AppCompatActivity  {
         tv_total_score = findViewById(R.id.tv_total_score);
         tv_word_formed = findViewById(R.id.tv_word_formed);
         tl_game_grid = findViewById(R.id.tl_game_grid);
-        powerup_progress=findViewById(R.id.powerup_progress);
+        powerup_progress = findViewById(R.id.powerup_progress);
         letterDiceGenerator = new LetterDiceGenerator(this);
         letterDiceGrid = new ArrayList<>();
         memoizeWordResults = new HashMap<>();
@@ -150,7 +150,7 @@ public class GameActivity extends AppCompatActivity  {
             Intent i = new Intent(view.getContext(), GameActivity.class);
 
             cdt_timer.cancel();
-            
+
             finish();
             startActivity(i);
         });
@@ -186,7 +186,7 @@ public class GameActivity extends AppCompatActivity  {
         pb_progressbar_1.setMax(100);
         pb_progressbar_2.setMax(100);
 
-        int GAME_TIME_MILLISECONDS = 30000;
+        int GAME_TIME_MILLISECONDS = 180000;
 
         cdt_timer = new CountDownTimer(GAME_TIME_MILLISECONDS, 1000) {
             @Override
@@ -210,8 +210,6 @@ public class GameActivity extends AppCompatActivity  {
             }
         };
     }
-
-
 
 
     @SuppressLint("ClickableViewAccessibility")
@@ -241,8 +239,10 @@ public class GameActivity extends AppCompatActivity  {
                 view.setVisibility(View.INVISIBLE);
                 view.post(
                         () -> {
+                            final int MARGIN = 30;
+
                             TableRow.LayoutParams layoutParams = new TableRow.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT, 1f);
-                            layoutParams.setMargins(30, 30, 30, 30);
+                            layoutParams.setMargins(MARGIN, MARGIN, MARGIN, MARGIN);
                             view.setLayoutParams(layoutParams);
                             view.setVisibility(View.VISIBLE);
                         }
@@ -253,6 +253,12 @@ public class GameActivity extends AppCompatActivity  {
 
             tl_game_grid.addView(tableRow);
         }
+
+//        for (int row = 0; row < letterDiceGrid.size(); row++) {
+//            TableRowSweepAnimation tableRowSweepAnimation = new TableRowSweepAnimation(this);
+//            tableRowSweepAnimation.bringToFront();
+//            tl_game_grid.addView(tableRowSweepAnimation);
+//        }
 
         tl_game_grid.setOnTouchListener((v, event) -> {
 
