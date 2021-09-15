@@ -6,7 +6,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Rect;
-import android.graphics.drawable.Drawable;
 
 import android.graphics.drawable.GradientDrawable;
 import android.hardware.Sensor;
@@ -32,11 +31,9 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.content.res.AppCompatResources;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.common.primitives.Ints;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -56,8 +53,6 @@ public class GameActivity extends AppCompatActivity {
     private SensorManager mSensorManager;
 
     private final int DIMENSIONS = 4;
-    private Button btn_new_game;
-    private Button btn_exit_game_activity;
     private CountDownTimer cdt_timer;
     private ProgressBar pb_left_wing;
     private ProgressBar pb_right_wing;
@@ -69,12 +64,13 @@ public class GameActivity extends AppCompatActivity {
 
     private ArrayList<View> selectedLetterDice;
     private ArrayList<ArrayList<LetterDie>> letterDiceGrid;
+    private CountDownTimer fadeAnimation;
     private LetterDiceGenerator letterDiceGenerator;
     private Map<String, Boolean> memoizeWordResults;
     private Player player;
     private ScoreSystem scoreSystem;
     private int timer;
-    private CountDownTimer fadeAnimation;
+    private final double POWER_UP_THRESHOLD = 2500;
 
     private float mAccel; // acceleration apart from gravity
     private float mAccelCurrent; // current acceleration including gravity
@@ -115,14 +111,14 @@ public class GameActivity extends AppCompatActivity {
                 if (player.getPowerUpAvailable()) {
                     Toast toast = Toast.makeText(getApplicationContext(), "Power Up Activated!", Toast.LENGTH_LONG);
                     toast.show();
-                    player.setPowerUpAvailable(false);
 
                     GradientDrawable border = new GradientDrawable();
                     border.setColor(Color.BLACK);
                     border.setStroke(100, Color.BLACK);
-
                     RelativeLayout rl_game = findViewById(R.id.rl_game);
                     rl_game.setBackground(border);
+
+                    player.activatePowerUp();
                     updatePowerUpStatus();
                 }
             }
@@ -146,8 +142,8 @@ public class GameActivity extends AppCompatActivity {
     }
 
     private void initLayout() {
-        btn_new_game = findViewById(R.id.btn_new_game);
-        btn_exit_game_activity = findViewById(R.id.btn_exit_game_activity);
+        Button btn_new_game = findViewById(R.id.btn_new_game);
+        Button btn_exit_game_activity = findViewById(R.id.btn_exit_game_activity);
         tv_score_formed = findViewById(R.id.tv_score_formed);
         tv_total_score = findViewById(R.id.tv_total_score);
         tv_word_formed = findViewById(R.id.tv_word_formed);
@@ -155,11 +151,11 @@ public class GameActivity extends AppCompatActivity {
         letterDiceGenerator = new LetterDiceGenerator(this);
         letterDiceGrid = new ArrayList<>();
         memoizeWordResults = new HashMap<>();
-        player = new Player();
+        player = new Player((int) POWER_UP_THRESHOLD);
         selectedLetterDice = new ArrayList<>();
         scoreSystem = new ScoreSystem(DIMENSIONS);
 
-        this.btn_new_game.setOnClickListener(view -> {
+        btn_new_game.setOnClickListener(view -> {
             Intent i = new Intent(view.getContext(), GameActivity.class);
 
             cdt_timer.cancel();
@@ -168,7 +164,7 @@ public class GameActivity extends AppCompatActivity {
             startActivity(i);
         });
 
-        this.btn_exit_game_activity.setOnClickListener(view -> {
+        btn_exit_game_activity.setOnClickListener(view -> {
             Intent i = new Intent(view.getContext(), MainActivity.class);
 
             cdt_timer.cancel();
@@ -222,7 +218,7 @@ public class GameActivity extends AppCompatActivity {
     }
 
     private void updatePowerUpStatus() {
-        double playerProgress = player.getPowerUpProgress() / 500.0;
+        double playerProgress = player.getPowerUpProgress() / POWER_UP_THRESHOLD;
 
         playerProgress = playerProgress > 1 ? 1 : playerProgress < 0 ? 0 : playerProgress;
 
@@ -330,7 +326,7 @@ public class GameActivity extends AppCompatActivity {
 
             player.addValidWordSubmitted(WORD_FORMED);
             player.addScore(SCORE);
-            player.setPowerUpProgress(SCORE);
+            player.addPowerUpProgress(SCORE);
             tv_total_score.setText(player.getScoreString());
             tv_score_formed.setText("+ " + SCORE_STRING);
             updatePowerUpStatus();
