@@ -28,9 +28,7 @@ public class TableRowSweepAnimation extends View {
 
         long elapsedTime = System.currentTimeMillis() - startTime;
 
-        //matrix.postRotate(30 * elapsedTime/1000);        // rotate 30° every second
         matrix.postTranslate(25 * elapsedTime / 1000, 0); // move 100 pixels to the right
-        // other transformations...
 
         canvas.concat(matrix);        // call this before drawing on the canvas!!
         Paint myPaint = new Paint();

@@ -73,6 +73,7 @@ public class GameActivity extends AppCompatActivity {
     private final int DIMENSIONS = 4;
     private final int GAME_TIME_MILLISECONDS = 180000;
     private final int POWER_UP_MILLISECONDS = 10000;
+    private boolean hasFinishedStartingAnimation = false;
     private float mAccel; // acceleration apart from gravity
     private float mAccelCurrent; // current acceleration including gravity
     private float mAccelLast; // last acceleration including gravity
@@ -309,22 +310,51 @@ public class GameActivity extends AppCompatActivity {
                     }
             );
 
-            for (int column = 0; column < letterDiceGrid.size(); column++) {
-                View view = letterDieAdapter.getView(column, null, (ViewGroup) getWindow().getDecorView().getRootView());
-                view.setVisibility(View.INVISIBLE);
-                view.post(
-                        () -> {
-                            final int MARGIN = 30;
+            TableRowSweepAnimation tableRowSweepAnimation = new TableRowSweepAnimation(this);
+            tableRowSweepAnimation.bringToFront();
 
-                            TableRow.LayoutParams layoutParams = new TableRow.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT, 1f);
-                            layoutParams.setMargins(MARGIN, MARGIN, MARGIN, MARGIN);
-                            view.setLayoutParams(layoutParams);
-                            view.setVisibility(View.VISIBLE);
-                        }
-                );
+            new CountDownTimer(3000, 1000) {
+                @Override
+                public void onTick(long millisUntilFinished) {
+                }
 
-                tableRow.addView(view);
-            }
+                @Override
+                public void onFinish() {
+                    if (!hasFinishedStartingAnimation) {
+                        tl_game_grid.removeAllViews();
+                        hasFinishedStartingAnimation = true;
+                    }
+
+                    tableRow.post(
+                            () -> {
+                                TableRow.LayoutParams layoutParams = new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.WRAP_CONTENT, 1f);
+                                tableRow.setLayoutParams(layoutParams);
+                                tableRow.setGravity(Gravity.CENTER);
+                                tableRow.setWeightSum(DIMENSIONS);
+                            }
+                    );
+
+                    for (int column = 0; column < letterDiceGrid.size(); column++) {
+                        View view = letterDieAdapter.getView(column, null, (ViewGroup) getWindow().getDecorView().getRootView());
+                        view.setVisibility(View.INVISIBLE);
+                        view.post(
+                                () -> {
+                                    final int MARGIN = 30;
+
+                                    TableRow.LayoutParams layoutParams = new TableRow.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT, 1f);
+                                    layoutParams.setMargins(MARGIN, MARGIN, MARGIN, MARGIN);
+                                    view.setLayoutParams(layoutParams);
+                                    view.setVisibility(View.VISIBLE);
+                                }
+                        );
+
+                        tableRow.addView(view);
+                    }
+                    tl_game_grid.addView(tableRow);
+                }
+            }.start();
+
+            tl_game_grid.addView(tableRowSweepAnimation);
 
             tl_game_grid.addView(tableRow);
         }
