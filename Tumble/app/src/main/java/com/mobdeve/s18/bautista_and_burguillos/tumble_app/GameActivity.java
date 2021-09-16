@@ -68,7 +68,7 @@ public class GameActivity extends AppCompatActivity {
     private ScoreSystem scoreSystem;
     private int powerUpTimer;
     private int timer;
-    private final double POWER_UP_THRESHOLD = 1;
+    private final double POWER_UP_THRESHOLD = 3000;
 
     private float mAccel; // acceleration apart from gravity
     private float mAccelCurrent; // current acceleration including gravity
@@ -117,6 +117,9 @@ public class GameActivity extends AppCompatActivity {
 
                     LinearLayout ll_game_bottom = findViewById(R.id.ll_game_bottom);
                     ll_game_bottom.setPadding(20, 30, 20, 0);
+
+                    tl_game_grid.removeAllViews();
+                    generateGameBoard();
 
                     scoreSystem.setScoreMultiplier(20);
                     cdtTimer.pause();
