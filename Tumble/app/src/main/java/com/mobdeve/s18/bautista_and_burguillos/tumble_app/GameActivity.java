@@ -143,6 +143,8 @@ public class GameActivity extends AppCompatActivity {
 
                             scoreSystem.setScoreMultiplier(5);
                             cdtTimer.resume();
+
+                            player.setPowerUpActive(false);
                         }
                     }.start();
                 }

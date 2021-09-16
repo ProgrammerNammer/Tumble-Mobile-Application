@@ -11,6 +11,7 @@ public class Player {
     private int score;
     private int powerUpProgress;
     private boolean isPowerUpAvailable;
+    private boolean isPowerUpActive;
 
     public Player(int powerUpActivationThreshold) {
         this.score = 0;
@@ -18,6 +19,8 @@ public class Player {
         this.powerUpActivationThreshold = powerUpActivationThreshold;
         this.validWordsSubmitted = new ArrayList<>();
         this.diceCurrentlySelected = new Stack<>();
+        this.isPowerUpAvailable = false;
+        this.isPowerUpActive = false;
     }
 
     public boolean isUniqueValidWord(String validWord) {
@@ -83,20 +86,27 @@ public class Player {
     }
 
     public void addPowerUpProgress(int p) {
-        this.powerUpProgress += p;
-        if (powerUpProgress >= powerUpActivationThreshold) {
-            setPowerUpAvailable(true);
+        if (!isPowerUpActive) {
+            this.powerUpProgress += p;
+
+            if (powerUpProgress >= powerUpActivationThreshold) {
+                setPowerUpAvailable(true);
+            }
         }
     }
 
     public void activatePowerUp() {
         setPowerUpAvailable(false);
+        setPowerUpActive(true);
         this.powerUpProgress = 0;
     }
 
-
     public void setPowerUpAvailable(boolean b) {
         isPowerUpAvailable = b;
+    }
+
+    public void setPowerUpActive(boolean b) {
+        isPowerUpActive = b;
     }
 
     public boolean getPowerUpAvailable() {
