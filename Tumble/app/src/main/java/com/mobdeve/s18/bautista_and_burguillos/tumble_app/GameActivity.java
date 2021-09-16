@@ -273,7 +273,7 @@ public class GameActivity extends AppCompatActivity {
                 pb_right_wing.setProgress(100);
 
                 i.putExtra(getResources().getString(R.string.key_final_score), player.getScore());
-
+                gameOver(Integer.toString(player.getScore()));
                 finish();
                 startActivity(i);
             }
