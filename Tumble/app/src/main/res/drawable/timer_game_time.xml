@@ -4,13 +4,7 @@
     <!-- Define the background properties like color etc -->
     <item android:id="@android:id/background">
         <shape>
-            <gradient
-                android:startColor="#FFCD00"
-                android:centerColor="#FFCD00"
-                android:centerY="1.0"
-                android:endColor="#0d1522"
-                android:angle="270"
-                />
+            <solid android:color="#FFCD00" />
         </shape>
     </item>
 

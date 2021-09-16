@@ -5,7 +5,6 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Rect;
-import android.graphics.drawable.Drawable;
 
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
@@ -13,7 +12,6 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.CountDownTimer;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.MotionEvent;
@@ -22,14 +20,13 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.content.res.AppCompatResources;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -43,42 +40,39 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
-import java.util.Random;
 import java.util.concurrent.ExecutionException;
 
 import javax.net.ssl.HttpsURLConnection;
 
 
-public class GameActivity extends AppCompatActivity  {
+public class GameActivity extends AppCompatActivity {
     private SensorManager mSensorManager;
 
     private final int DIMENSIONS = 4;
-    private Button btn_new_game;
-    private Button btn_exit_game_activity;
-    private CountDownTimer cdt_timer;
-    private CountDownTimer cdt_timer2;
-    private ProgressBar pb_progressbar_1;
-    private ProgressBar pb_progressbar_2;
+    private ProgressBar pb_left_wing;
+    private ProgressBar pb_right_wing;
+    private ProgressBar pb_power_up;
     private TableLayout tl_game_grid;
     private TextView tv_score_formed;
     private TextView tv_total_score;
     private TextView tv_word_formed;
-    private TextView powerup_progress;
 
     private ArrayList<View> selectedLetterDice;
     private ArrayList<ArrayList<LetterDie>> letterDiceGrid;
+    private CountDownTimer cdtTimer;
+    private CountDownTimer cdtPowerUp;
+    private CountDownTimer cdtTextFadeEffect;
     private LetterDiceGenerator letterDiceGenerator;
     private Map<String, Boolean> memoizeWordResults;
     private Player player;
     private ScoreSystem scoreSystem;
-    private int progress;
-    private CountDownTimer fadeAnimation;
+    private int powerUpTimer;
+    private int timer;
+    private final double POWER_UP_THRESHOLD = 3000;
 
     private float mAccel; // acceleration apart from gravity
     private float mAccelCurrent; // current acceleration including gravity
     private float mAccelLast; // last acceleration including gravity
-
 
     //  TODO: Cleanup, progress bar still going even after finish
     @Override
@@ -87,83 +81,88 @@ public class GameActivity extends AppCompatActivity  {
         setContentView(R.layout.activity_game);
         mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         mSensorManager.registerListener(mSensorListener, mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER), SensorManager.SENSOR_DELAY_NORMAL);
-        mAccel = 0.00f;
         mAccelCurrent = SensorManager.GRAVITY_EARTH;
         mAccelLast = SensorManager.GRAVITY_EARTH;
+        mAccel = 0.00f;
 
         initLayout();
         initTimer();
         generateGameBoard();
 
-        cdt_timer.start();
+        cdtTimer.start();
     }
 
     private final SensorEventListener mSensorListener = new SensorEventListener() {
 
         public void onSensorChanged(SensorEvent se) {
-
             float x = se.values[0];
             float y = se.values[1];
             float z = se.values[2];
-
             mAccelLast = mAccelCurrent;
-            mAccelCurrent = (float) Math.sqrt((double) (x*x + y*y + z*z));
+            mAccelCurrent = (float) Math.sqrt((double) (x * x + y * y + z * z));
             float delta = mAccelCurrent - mAccelLast;
             mAccel = mAccel * 0.9f + delta; // perform low-cut filter
 
-            if (mAccel > 6) {
-                Log.d("shake", "shake");
-                if(player.getPowerupAvail()) {
+            // if (mAccel > 12) {
+            if (mAccel > 1) {
+                if (player.getPowerUpAvailable()) {
+                    LinearLayout ll_game_top = findViewById(R.id.ll_game_top);
+                    ll_game_top.setBackground(getDrawable(R.drawable.activity_game_top_background_power_up));
 
-                    player.setPowerupAvail(false);
-                    Random rand = new Random();
-                    int upperbound = 4;
+                    RelativeLayout rl_game = findViewById(R.id.rl_game);
+                    rl_game.setPadding(30, 30, 30, 30);
+                    rl_game.setBackground(getDrawable(R.drawable.powerup_border));
 
-                    int int_random = rand.nextInt(upperbound);
+                    ll_game_top.setPadding(20, 0, 20, 50);
 
-                    if(int_random == 0){
-                        scoreSystem.setScoreMultiplier(10);
-                        Toast toast = Toast.makeText(getApplicationContext(), "2x SCORE!", Toast.LENGTH_LONG);
-                        toast.show();
-                        cdt_timer2 = new CountDownTimer(10000, 1000) {
+                    LinearLayout ll_game_bottom = findViewById(R.id.ll_game_bottom);
+                    ll_game_bottom.setPadding(20, 30, 20, 0);
+
+                    tl_game_grid.removeAllViews();
+                    generateGameBoard();
+
+                    scoreSystem.setScoreMultiplier(20);
+                    cdtTimer.pause();
+
+                    player.activatePowerUp();
+                    updatePowerUpStatus();
+
+                    final int POWER_UP_MILLISECONDS = 10000;
+
+                    cdtPowerUp = new CountDownTimer(POWER_UP_MILLISECONDS, 1000) {
                         @Override
                         public void onTick(long millisUntilFinished) {
-                            // Log.v("Time", "Tick of Progress"+ i+ millisUntilFinished);
-                            progress++;
-                            pb_progressbar_1.setProgress((int) progress * 100 / (10000 / 1000));
-                            pb_progressbar_2.setProgress((int) progress * 100 / (10000 / 1000));
-
-                            toast.show();
+                            powerUpTimer++;
+                            pb_power_up.setProgress(powerUpTimer * 100 / (10000 / 1000));
                         }
 
                         @Override
                         public void onFinish() {
+                            LinearLayout ll_game_top = findViewById(R.id.ll_game_top);
+                            ll_game_top.setBackground(getDrawable(R.drawable.activity_game_top_background));
+
+                            RelativeLayout rl_game = findViewById(R.id.rl_game);
+                            rl_game.setPadding(0, 0, 0, 0);
+
+                            ll_game_top.setPadding(50, 30, 50, 50);
+
+                            LinearLayout ll_game_bottom = findViewById(R.id.ll_game_bottom);
+                            ll_game_bottom.setPadding(50, 30, 50, 30);
+
                             scoreSystem.setScoreMultiplier(5);
+                            cdtTimer.resume();
+
+                            player.setPowerUpActive(false);
+                            powerUpTimer = 0;
+
+                            pb_power_up.setProgress(100);
                         }
-                         };
-                     }
-                    else if(int_random ==1){
-                        initTimer();
-                        Toast toast = Toast.makeText(getApplicationContext(), "TIMER RESET!", Toast.LENGTH_LONG);
-                        toast.show();
-                    }
-                    else if(int_random == 2){
-                        /*
-                        TODO: REGENERATE BOARD
-                         */
-                        Toast toast = Toast.makeText(getApplicationContext(), "BOARD RESET!", Toast.LENGTH_LONG);
-                        toast.show();
-                    }
-                    else{
-                        Toast toast = Toast.makeText(getApplicationContext(), "NO POWERUP! BETTER LUCK NEXT TIME!", Toast.LENGTH_LONG);
-                        toast.show();
-                    }
-
-
+                    }.start();
                 }
             }
         }
 
+        @Override
         public void onAccuracyChanged(Sensor sensor, int accuracy) {
         }
     };
@@ -180,34 +179,43 @@ public class GameActivity extends AppCompatActivity  {
         super.onPause();
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        Log.d("MyTag", "Destroy function called");
+        try {
+            cdtTextFadeEffect.cancel();
+            cdtPowerUp.cancel();
+            cdtTimer.cancel();
+        } catch (Exception e) {
+            Log.e("CountDownTimer", "Error " + e);
+        }
+    }
+
     private void initLayout() {
-        btn_new_game = findViewById(R.id.btn_new_game);
-        btn_exit_game_activity = findViewById(R.id.btn_exit_game_activity);
+        Button btn_new_game = findViewById(R.id.btn_new_game);
+        Button btn_exit_game_activity = findViewById(R.id.btn_exit_game_activity);
         tv_score_formed = findViewById(R.id.tv_score_formed);
         tv_total_score = findViewById(R.id.tv_total_score);
         tv_word_formed = findViewById(R.id.tv_word_formed);
         tl_game_grid = findViewById(R.id.tl_game_grid);
-        powerup_progress=findViewById(R.id.powerup_progress);
         letterDiceGenerator = new LetterDiceGenerator(this);
         letterDiceGrid = new ArrayList<>();
         memoizeWordResults = new HashMap<>();
-        player = new Player();
+        player = new Player((int) POWER_UP_THRESHOLD);
         selectedLetterDice = new ArrayList<>();
         scoreSystem = new ScoreSystem(DIMENSIONS);
 
-        this.btn_new_game.setOnClickListener(view -> {
+        btn_new_game.setOnClickListener(view -> {
             Intent i = new Intent(view.getContext(), GameActivity.class);
 
-            cdt_timer.cancel();
-            
             finish();
             startActivity(i);
         });
 
-        this.btn_exit_game_activity.setOnClickListener(view -> {
+        btn_exit_game_activity.setOnClickListener(view -> {
             Intent i = new Intent(view.getContext(), MainActivity.class);
-
-            cdt_timer.cancel();
 
             finish();
             startActivity(i);
@@ -220,48 +228,51 @@ public class GameActivity extends AppCompatActivity  {
     }
 
     private void initTimer() {
-        progress = 0;
+        timer = 0;
+        powerUpTimer = 0;
 
-        this.pb_progressbar_1 = (ProgressBar) findViewById(R.id.progressbar);
-        this.pb_progressbar_2 = (ProgressBar) findViewById(R.id.progressbar2);
-        this.pb_progressbar_1.setProgress(progress);
-        this.pb_progressbar_2.setProgress(progress);
+        this.pb_left_wing = findViewById(R.id.pb_left_wing);
+        this.pb_right_wing = findViewById(R.id.pb_right_wing);
+        this.pb_power_up = findViewById(R.id.pb_power_up);
+
+        this.pb_left_wing.setProgress(timer);
+        this.pb_right_wing.setProgress(timer);
+        updatePowerUpStatus();
 
         Intent i = new Intent(this, GameOverActivity.class);
 
-        //  Load the custom progress bar
-        Drawable drawable = AppCompatResources.getDrawable(this, R.drawable.custom_timer);
-        pb_progressbar_1.setProgressDrawable(drawable);
-        pb_progressbar_1.setMax(100);
-        pb_progressbar_2.setMax(100);
+        int GAME_TIME_MILLISECONDS = 180000;
 
-        int GAME_TIME_MILLISECONDS = 30000;
-
-        cdt_timer = new CountDownTimer(GAME_TIME_MILLISECONDS, 1000) {
+        cdtTimer = new CountDownTimer(GAME_TIME_MILLISECONDS, 1000) {
             @Override
             public void onTick(long millisUntilFinished) {
                 // Log.v("Time", "Tick of Progress"+ i+ millisUntilFinished);
-                progress++;
-                pb_progressbar_1.setProgress((int) progress * 100 / (GAME_TIME_MILLISECONDS / 1000));
-                pb_progressbar_2.setProgress((int) progress * 100 / (GAME_TIME_MILLISECONDS / 1000));
+                timer++;
+                pb_left_wing.setProgress(timer * 100 / (GAME_TIME_MILLISECONDS / 1000));
+                pb_right_wing.setProgress(timer * 100 / (GAME_TIME_MILLISECONDS / 1000));
             }
 
             @Override
             public void onFinish() {
-                progress++;
-                pb_progressbar_1.setProgress(100);
-                pb_progressbar_2.setProgress(100);
+                timer++;
+                pb_left_wing.setProgress(100);
+                pb_right_wing.setProgress(100);
 
                 i.putExtra(getResources().getString(R.string.key_final_score), player.getScore());
-                //gameOver(Integer.toString(player.getScore()));
+
                 startActivity(i);
                 finish();
             }
         };
     }
 
+    private void updatePowerUpStatus() {
+        double playerProgress = player.getPowerUpProgress() / POWER_UP_THRESHOLD;
 
+        playerProgress = playerProgress > 1 ? 1 : playerProgress < 0 ? 0 : playerProgress;
 
+        pb_power_up.setProgress((int) (100 - playerProgress * 100));
+    }
 
     @SuppressLint("ClickableViewAccessibility")
     private void generateGameBoard() {
@@ -287,12 +298,15 @@ public class GameActivity extends AppCompatActivity  {
 
             for (int column = 0; column < letterDiceGrid.size(); column++) {
                 View view = letterDieAdapter.getView(column, null, (ViewGroup) getWindow().getDecorView().getRootView());
+                view.setVisibility(View.INVISIBLE);
                 view.post(
                         () -> {
-                            TableRow.LayoutParams layoutParams = new TableRow.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT, 1f);
-                            layoutParams.setMargins(30, 30, 30, 30);
+                            final int MARGIN = 30;
 
+                            TableRow.LayoutParams layoutParams = new TableRow.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT, 1f);
+                            layoutParams.setMargins(MARGIN, MARGIN, MARGIN, MARGIN);
                             view.setLayoutParams(layoutParams);
+                            view.setVisibility(View.VISIBLE);
                         }
                 );
 
@@ -302,17 +316,23 @@ public class GameActivity extends AppCompatActivity  {
             tl_game_grid.addView(tableRow);
         }
 
+//        for (int row = 0; row < letterDiceGrid.size(); row++) {
+//            TableRowSweepAnimation tableRowSweepAnimation = new TableRowSweepAnimation(this);
+//            tableRowSweepAnimation.bringToFront();
+//            tl_game_grid.addView(tableRowSweepAnimation);
+//        }
+
         tl_game_grid.setOnTouchListener((v, event) -> {
 
             switch (event.getAction()) {
                 case MotionEvent.ACTION_MOVE:
                 case MotionEvent.ACTION_DOWN:
                 case MotionEvent.ACTION_POINTER_DOWN: {
-                    if (fadeAnimation != null) {
+                    if (cdtTextFadeEffect != null) {
                         tv_word_formed.setText("");
                         tv_score_formed.setText("");
-                        fadeAnimation.cancel();
-                        fadeAnimation = null;
+                        cdtTextFadeEffect.cancel();
+                        cdtTextFadeEffect = null;
                     }
 
                     handleDiceSelect((int) event.getRawX(), (int) event.getRawY());
@@ -355,16 +375,16 @@ public class GameActivity extends AppCompatActivity  {
 
             player.addValidWordSubmitted(WORD_FORMED);
             player.addScore(SCORE);
-            player.setPowerup_prog(SCORE);
-            powerup_progress.setText(Integer.toString(player.getPowerup_prog()));
+            player.addPowerUpProgress(SCORE);
             tv_total_score.setText(player.getScoreString());
             tv_score_formed.setText("+ " + SCORE_STRING);
+            updatePowerUpStatus();
 
         } else {
             tv_score_formed.setText(getResources().getString(R.string.score_status_not_a_word));
         }
 
-        fadeAnimation = new CountDownTimer(3000, 1000) {
+        cdtTextFadeEffect = new CountDownTimer(3000, 1000) {
             @Override
             public void onTick(long millisUntilFinished) {
 
@@ -420,9 +440,9 @@ public class GameActivity extends AppCompatActivity  {
 
                             player.pushDiceCurrentlySelected(letterDie);
 
-                            View sample = rowChildren.getChildAt(column);
-                            sample.setBackground(getDrawable(R.drawable.letter_die_activated));
-                            selectedLetterDice.add(sample);
+                            View letterDieInstance = rowChildren.getChildAt(column);
+                            letterDieInstance.setBackground(getDrawable(R.drawable.letter_die_activated));
+                            selectedLetterDice.add(letterDieInstance);
                         }
 
                         break;

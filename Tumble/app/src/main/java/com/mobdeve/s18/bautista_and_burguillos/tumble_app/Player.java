@@ -7,14 +7,20 @@ import java.util.Stack;
 public class Player {
     private final ArrayList<String> validWordsSubmitted;
     private final Stack<LetterDie> diceCurrentlySelected;
+    private final int powerUpActivationThreshold;
     private int score;
-    private int powerup_prog;
-    private boolean powerup_available;
-    public Player() {
+    private int powerUpProgress;
+    private boolean isPowerUpAvailable;
+    private boolean isPowerUpActive;
+
+    public Player(int powerUpActivationThreshold) {
         this.score = 0;
-        this.powerup_prog=0;
-        validWordsSubmitted = new ArrayList<>();
-        diceCurrentlySelected = new Stack<>();
+        this.powerUpProgress = 0;
+        this.powerUpActivationThreshold = powerUpActivationThreshold;
+        this.validWordsSubmitted = new ArrayList<>();
+        this.diceCurrentlySelected = new Stack<>();
+        this.isPowerUpAvailable = false;
+        this.isPowerUpActive = false;
     }
 
     public boolean isUniqueValidWord(String validWord) {
@@ -55,7 +61,6 @@ public class Player {
         return diceCurrentlySelected.isEmpty() || diceCurrentlySelected.contains(letterDie);
     }
 
-
     public void addValidWordSubmitted(String validWord) {
         this.validWordsSubmitted.add(validWord);
     }
@@ -76,20 +81,35 @@ public class Player {
         return Integer.toString(score);
     }
 
-    public int getPowerup_prog(){return powerup_prog;}
+    public int getPowerUpProgress() {
+        return powerUpProgress;
+    }
 
-    public void setPowerup_prog(int p){
-        powerup_prog += p;
-        if (powerup_prog > 500  ){
-            setPowerupAvail(true);
-            powerup_prog -= 500;
+    public void addPowerUpProgress(int p) {
+        if (!isPowerUpActive) {
+            this.powerUpProgress += p;
+
+            if (powerUpProgress >= powerUpActivationThreshold) {
+                setPowerUpAvailable(true);
+            }
         }
+    }
 
+    public void activatePowerUp() {
+        setPowerUpAvailable(false);
+        setPowerUpActive(true);
+        this.powerUpProgress = 0;
     }
-    public void setPowerupAvail(boolean b){
-        powerup_available = b;
+
+    public void setPowerUpAvailable(boolean b) {
+        isPowerUpAvailable = b;
     }
-    public boolean getPowerupAvail(){
-        return powerup_available;
+
+    public void setPowerUpActive(boolean b) {
+        isPowerUpActive = b;
+    }
+
+    public boolean getPowerUpAvailable() {
+        return isPowerUpAvailable;
     }
 }
