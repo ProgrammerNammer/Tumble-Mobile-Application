@@ -4,10 +4,8 @@ import android.annotation.SuppressLint;
 
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
 import android.graphics.Rect;
 
-import android.graphics.drawable.GradientDrawable;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -53,7 +51,6 @@ public class GameActivity extends AppCompatActivity {
     private SensorManager mSensorManager;
 
     private final int DIMENSIONS = 4;
-    private CountDownTimer cdt_timer;
     private ProgressBar pb_left_wing;
     private ProgressBar pb_right_wing;
     private ProgressBar pb_power_up;
@@ -64,18 +61,18 @@ public class GameActivity extends AppCompatActivity {
 
     private ArrayList<View> selectedLetterDice;
     private ArrayList<ArrayList<LetterDie>> letterDiceGrid;
-    private CountDownTimer fadeAnimation;
+    private CountDownTimer cdtTimer;
+    private CountDownTimer textFadeEffect;
     private LetterDiceGenerator letterDiceGenerator;
     private Map<String, Boolean> memoizeWordResults;
     private Player player;
     private ScoreSystem scoreSystem;
     private int timer;
-    private final double POWER_UP_THRESHOLD = 2500;
+    private final double POWER_UP_THRESHOLD = 1;
 
     private float mAccel; // acceleration apart from gravity
     private float mAccelCurrent; // current acceleration including gravity
     private float mAccelLast; // last acceleration including gravity
-
 
     //  TODO: Cleanup, progress bar still going even after finish
     @Override
@@ -92,7 +89,7 @@ public class GameActivity extends AppCompatActivity {
         initTimer();
         generateGameBoard();
 
-        cdt_timer.start();
+        cdtTimer.start();
     }
 
     private final SensorEventListener mSensorListener = new SensorEventListener() {
@@ -109,14 +106,17 @@ public class GameActivity extends AppCompatActivity {
             // if (mAccel > 12) {
             if (mAccel > 1) {
                 if (player.getPowerUpAvailable()) {
-                    Toast toast = Toast.makeText(getApplicationContext(), "Power Up Activated!", Toast.LENGTH_LONG);
-                    toast.show();
+                    LinearLayout ll_game_top = findViewById(R.id.ll_game_top);
+                    ll_game_top.setBackground(getDrawable(R.drawable.activity_game_top_background_power_up));
 
-                    GradientDrawable border = new GradientDrawable();
-                    border.setColor(Color.BLACK);
-                    border.setStroke(100, Color.BLACK);
                     RelativeLayout rl_game = findViewById(R.id.rl_game);
-                    rl_game.setBackground(border);
+                    rl_game.setPadding(30, 30, 30, 30);
+                    rl_game.setBackground(getDrawable(R.drawable.powerup_border));
+
+                    ll_game_top.setPadding(20, 0, 20, 50);
+
+                    LinearLayout ll_game_bottom = findViewById(R.id.ll_game_bottom);
+                    ll_game_bottom.setPadding(20, 30, 20, 0);
 
                     player.activatePowerUp();
                     updatePowerUpStatus();
@@ -158,16 +158,12 @@ public class GameActivity extends AppCompatActivity {
         btn_new_game.setOnClickListener(view -> {
             Intent i = new Intent(view.getContext(), GameActivity.class);
 
-            cdt_timer.cancel();
-
             finish();
             startActivity(i);
         });
 
         btn_exit_game_activity.setOnClickListener(view -> {
             Intent i = new Intent(view.getContext(), MainActivity.class);
-
-            cdt_timer.cancel();
 
             finish();
             startActivity(i);
@@ -194,7 +190,7 @@ public class GameActivity extends AppCompatActivity {
 
         int GAME_TIME_MILLISECONDS = 180000;
 
-        cdt_timer = new CountDownTimer(GAME_TIME_MILLISECONDS, 1000) {
+        cdtTimer = new CountDownTimer(GAME_TIME_MILLISECONDS, 1000) {
             @Override
             public void onTick(long millisUntilFinished) {
                 // Log.v("Time", "Tick of Progress"+ i+ millisUntilFinished);
@@ -279,11 +275,11 @@ public class GameActivity extends AppCompatActivity {
                 case MotionEvent.ACTION_MOVE:
                 case MotionEvent.ACTION_DOWN:
                 case MotionEvent.ACTION_POINTER_DOWN: {
-                    if (fadeAnimation != null) {
+                    if (textFadeEffect != null) {
                         tv_word_formed.setText("");
                         tv_score_formed.setText("");
-                        fadeAnimation.cancel();
-                        fadeAnimation = null;
+                        textFadeEffect.cancel();
+                        textFadeEffect = null;
                     }
 
                     handleDiceSelect((int) event.getRawX(), (int) event.getRawY());
@@ -335,7 +331,7 @@ public class GameActivity extends AppCompatActivity {
             tv_score_formed.setText(getResources().getString(R.string.score_status_not_a_word));
         }
 
-        fadeAnimation = new CountDownTimer(3000, 1000) {
+        textFadeEffect = new CountDownTimer(3000, 1000) {
             @Override
             public void onTick(long millisUntilFinished) {
 
@@ -391,9 +387,9 @@ public class GameActivity extends AppCompatActivity {
 
                             player.pushDiceCurrentlySelected(letterDie);
 
-                            View sample = rowChildren.getChildAt(column);
-                            sample.setBackground(getDrawable(R.drawable.letter_die_activated));
-                            selectedLetterDice.add(sample);
+                            View letterDieInstance = rowChildren.getChildAt(column);
+                            letterDieInstance.setBackground(getDrawable(R.drawable.letter_die_activated));
+                            selectedLetterDice.add(letterDieInstance);
                         }
 
                         break;

@@ -8,15 +8,16 @@
     android:orientation="vertical">
 
     <LinearLayout
-        android:id="@+id/linearLayoutCompat5"
+        android:id="@+id/ll_game_top"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/constraint_layout"
+        android:layout_above="@+id/cl_game_middle"
         android:layout_alignParentTop="true"
         android:background="@drawable/activity_game_top_background"
         android:orientation="vertical"
-        android:paddingHorizontal="15dp"
-        android:paddingBottom="20dp">
+        android:paddingHorizontal="50px"
+        android:paddingTop="30px"
+        android:paddingBottom="50px">
 
         <TextView
             android:id="@+id/tv_total_score"
@@ -73,35 +74,6 @@
             android:rotation="180"
             android:scaleY="3" />
 
-        <!--        <LinearLayout-->
-        <!--            android:layout_width="match_parent"-->
-        <!--            android:layout_height="wrap_content"-->
-        <!--            android:orientation="horizontal">-->
-
-        <!--            <TextView-->
-        <!--                android:layout_width="wrap_content"-->
-        <!--                android:layout_height="wrap_content"-->
-        <!--                android:layout_weight="1"-->
-        <!--                android:text="POWERUP PROGRESS"-->
-        <!--                android:textColor="@color/white" />-->
-
-        <!--            <TextView-->
-        <!--                android:id="@+id/tv_powerup_progress"-->
-        <!--                android:layout_width="wrap_content"-->
-        <!--                android:layout_height="wrap_content"-->
-        <!--                android:layout_weight="1"-->
-        <!--                android:text="0"-->
-        <!--                android:textColor="@color/white" />-->
-
-        <!--            <TextView-->
-        <!--                android:layout_width="wrap_content"-->
-        <!--                android:layout_height="wrap_content"-->
-        <!--                android:layout_weight="1"-->
-        <!--                android:text="/500"-->
-        <!--                android:textColor="@color/white" />-->
-        <!--            -->
-        <!--        </LinearLayout>-->
-
         <TableLayout
             android:id="@+id/tl_game_grid"
             android:layout_width="match_parent"
@@ -114,10 +86,10 @@
     </LinearLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/constraint_layout"
+        android:id="@+id/cl_game_middle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_above="@id/linearLayoutCompat4"
+        android:layout_above="@id/ll_game_bottom"
         android:background="@drawable/activity_game_middle_background"
         android:paddingVertical="25dp">
 
@@ -149,14 +121,15 @@
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <LinearLayout
-        android:id="@+id/linearLayoutCompat4"
+        android:id="@+id/ll_game_bottom"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:background="@drawable/activity_game_bottom_background"
         android:gravity="bottom"
         android:orientation="horizontal"
-        android:padding="10dp"
+        android:paddingVertical="30px"
+        android:paddingHorizontal="50px"
         android:weightSum="10">
 
         <androidx.appcompat.widget.AppCompatButton
