@@ -66,6 +66,7 @@ public class GameActivity extends AppCompatActivity {
     private Map<String, Boolean> memoizeWordResults;
     private Player player;
     private ScoreSystem scoreSystem;
+    private int powerUpTimer;
     private int timer;
     private final double POWER_UP_THRESHOLD = 1;
 
@@ -123,9 +124,13 @@ public class GameActivity extends AppCompatActivity {
                     player.activatePowerUp();
                     updatePowerUpStatus();
 
-                    cdtPowerUp = new CountDownTimer(10000, 1000) {
+                    final int POWER_UP_MILLISECONDS = 10000;
+
+                    cdtPowerUp = new CountDownTimer(POWER_UP_MILLISECONDS, 1000) {
                         @Override
                         public void onTick(long millisUntilFinished) {
+                            powerUpTimer++;
+                            pb_power_up.setProgress(powerUpTimer * 100 / (10000 / 1000));
                         }
 
                         @Override
@@ -145,6 +150,9 @@ public class GameActivity extends AppCompatActivity {
                             cdtTimer.resume();
 
                             player.setPowerUpActive(false);
+                            powerUpTimer = 0;
+
+                            pb_power_up.setProgress(100);
                         }
                     }.start();
                 }
@@ -166,6 +174,20 @@ public class GameActivity extends AppCompatActivity {
     protected void onPause() {
         mSensorManager.unregisterListener(mSensorListener);
         super.onPause();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        Log.d("MyTag", "Destroy function called");
+        try {
+            cdtTextFadeEffect.cancel();
+            cdtPowerUp.cancel();
+            cdtTimer.cancel();
+        } catch (Exception e) {
+            Log.e("CountDownTimer", "Error " + e);
+        }
     }
 
     private void initLayout() {
@@ -204,6 +226,7 @@ public class GameActivity extends AppCompatActivity {
 
     private void initTimer() {
         timer = 0;
+        powerUpTimer = 0;
 
         this.pb_left_wing = findViewById(R.id.pb_left_wing);
         this.pb_right_wing = findViewById(R.id.pb_right_wing);
