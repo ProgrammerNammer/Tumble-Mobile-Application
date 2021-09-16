@@ -7,15 +7,15 @@ import java.util.Stack;
 public class Player {
     private final ArrayList<String> validWordsSubmitted;
     private final Stack<LetterDie> diceCurrentlySelected;
-    private final int powerUpActivationTreshold;
+    private final int powerUpActivationThreshold;
     private int score;
     private int powerUpProgress;
     private boolean isPowerUpAvailable;
 
-    public Player(int powerUpActivationTreshold) {
+    public Player(int powerUpActivationThreshold) {
         this.score = 0;
         this.powerUpProgress = 0;
-        this.powerUpActivationTreshold = powerUpActivationTreshold;
+        this.powerUpActivationThreshold = powerUpActivationThreshold;
         this.validWordsSubmitted = new ArrayList<>();
         this.diceCurrentlySelected = new Stack<>();
     }
@@ -84,7 +84,7 @@ public class Player {
 
     public void addPowerUpProgress(int p) {
         this.powerUpProgress += p;
-        if (powerUpProgress >= powerUpActivationTreshold) {
+        if (powerUpProgress >= powerUpActivationThreshold) {
             setPowerUpAvailable(true);
         }
     }

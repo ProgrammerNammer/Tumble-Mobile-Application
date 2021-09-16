@@ -12,7 +12,6 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.CountDownTimer;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.MotionEvent;
@@ -118,6 +117,9 @@ public class GameActivity extends AppCompatActivity {
                     LinearLayout ll_game_bottom = findViewById(R.id.ll_game_bottom);
                     ll_game_bottom.setPadding(20, 30, 20, 0);
 
+                    scoreSystem.setScoreMultiplier(20);
+                    cdtTimer.pause();
+
                     player.activatePowerUp();
                     updatePowerUpStatus();
 
@@ -138,6 +140,9 @@ public class GameActivity extends AppCompatActivity {
 
                             LinearLayout ll_game_bottom = findViewById(R.id.ll_game_bottom);
                             ll_game_bottom.setPadding(50, 30, 50, 30);
+
+                            scoreSystem.setScoreMultiplier(5);
+                            cdtTimer.resume();
                         }
                     }.start();
                 }
