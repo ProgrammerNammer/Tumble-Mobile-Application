@@ -48,10 +48,12 @@ import javax.net.ssl.HttpsURLConnection;
 public class GameActivity extends AppCompatActivity {
     private SensorManager mSensorManager;
 
-    private final int DIMENSIONS = 4;
+    private LinearLayout ll_game_bottom;
+    private LinearLayout ll_game_top;
     private ProgressBar pb_left_wing;
     private ProgressBar pb_right_wing;
     private ProgressBar pb_power_up;
+    private RelativeLayout rl_game;
     private TableLayout tl_game_grid;
     private TextView tv_score_formed;
     private TextView tv_total_score;
@@ -65,14 +67,17 @@ public class GameActivity extends AppCompatActivity {
     private LetterDiceGenerator letterDiceGenerator;
     private Map<String, Boolean> memoizeWordResults;
     private Player player;
+    private SensorEventListener mSensorListener;
     private ScoreSystem scoreSystem;
-    private int powerUpTimer;
-    private int timer;
-    private final double POWER_UP_THRESHOLD = 3000;
-
+    private final double POWER_UP_THRESHOLD = 2500;
+    private final int DIMENSIONS = 4;
+    private final int GAME_TIME_MILLISECONDS = 10000;
+    private final int POWER_UP_MILLISECONDS = 180000;
     private float mAccel; // acceleration apart from gravity
     private float mAccelCurrent; // current acceleration including gravity
     private float mAccelLast; // last acceleration including gravity
+    private int powerUpTimer;
+    private int timer;
 
     //  TODO: Cleanup, progress bar still going even after finish
     @Override
@@ -85,87 +90,13 @@ public class GameActivity extends AppCompatActivity {
         mAccelLast = SensorManager.GRAVITY_EARTH;
         mAccel = 0.00f;
 
+        init();
         initLayout();
         initTimer();
         generateGameBoard();
 
         cdtTimer.start();
     }
-
-    private final SensorEventListener mSensorListener = new SensorEventListener() {
-
-        public void onSensorChanged(SensorEvent se) {
-            float x = se.values[0];
-            float y = se.values[1];
-            float z = se.values[2];
-            mAccelLast = mAccelCurrent;
-            mAccelCurrent = (float) Math.sqrt((double) (x * x + y * y + z * z));
-            float delta = mAccelCurrent - mAccelLast;
-            mAccel = mAccel * 0.9f + delta; // perform low-cut filter
-
-            // if (mAccel > 12) {
-            if (mAccel > 1) {
-                if (player.getPowerUpAvailable()) {
-                    LinearLayout ll_game_top = findViewById(R.id.ll_game_top);
-                    ll_game_top.setBackground(getDrawable(R.drawable.activity_game_top_background_power_up));
-
-                    RelativeLayout rl_game = findViewById(R.id.rl_game);
-                    rl_game.setPadding(30, 30, 30, 30);
-                    rl_game.setBackground(getDrawable(R.drawable.powerup_border));
-
-                    ll_game_top.setPadding(20, 0, 20, 50);
-
-                    LinearLayout ll_game_bottom = findViewById(R.id.ll_game_bottom);
-                    ll_game_bottom.setPadding(20, 30, 20, 0);
-
-                    tl_game_grid.removeAllViews();
-                    generateGameBoard();
-
-                    scoreSystem.setScoreMultiplier(20);
-                    cdtTimer.pause();
-
-                    player.activatePowerUp();
-                    updatePowerUpStatus();
-
-                    final int POWER_UP_MILLISECONDS = 10000;
-
-                    cdtPowerUp = new CountDownTimer(POWER_UP_MILLISECONDS, 1000) {
-                        @Override
-                        public void onTick(long millisUntilFinished) {
-                            powerUpTimer++;
-                            pb_power_up.setProgress(powerUpTimer * 100 / (10000 / 1000));
-                        }
-
-                        @Override
-                        public void onFinish() {
-                            LinearLayout ll_game_top = findViewById(R.id.ll_game_top);
-                            ll_game_top.setBackground(getDrawable(R.drawable.activity_game_top_background));
-
-                            RelativeLayout rl_game = findViewById(R.id.rl_game);
-                            rl_game.setPadding(0, 0, 0, 0);
-
-                            ll_game_top.setPadding(50, 30, 50, 50);
-
-                            LinearLayout ll_game_bottom = findViewById(R.id.ll_game_bottom);
-                            ll_game_bottom.setPadding(50, 30, 50, 30);
-
-                            scoreSystem.setScoreMultiplier(5);
-                            cdtTimer.resume();
-
-                            player.setPowerUpActive(false);
-                            powerUpTimer = 0;
-
-                            pb_power_up.setProgress(100);
-                        }
-                    }.start();
-                }
-            }
-        }
-
-        @Override
-        public void onAccuracyChanged(Sensor sensor, int accuracy) {
-        }
-    };
 
     @Override
     protected void onResume() {
@@ -180,32 +111,121 @@ public class GameActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onDestroy() {
-        super.onDestroy();
-
-        Log.d("MyTag", "Destroy function called");
+    public void finish()
+    {
+        super.finish();
+        
         try {
             cdtTextFadeEffect.cancel();
-            cdtPowerUp.cancel();
-            cdtTimer.cancel();
+            cdtTextFadeEffect = null;
         } catch (Exception e) {
-            Log.e("CountDownTimer", "Error " + e);
+            Log.e("Error", "NPE");
+        }
+
+        try {
+            cdtPowerUp.cancel();
+            cdtPowerUp = null;
+        } catch (Exception e) {
+            Log.e("Error", "NPE");
+        }
+
+        try {
+            cdtTimer.cancel();
+            cdtTimer = null;
+        } catch (Exception e) {
+            Log.e("Error", "NPE");
         }
     }
 
-    private void initLayout() {
-        Button btn_new_game = findViewById(R.id.btn_new_game);
-        Button btn_exit_game_activity = findViewById(R.id.btn_exit_game_activity);
-        tv_score_formed = findViewById(R.id.tv_score_formed);
-        tv_total_score = findViewById(R.id.tv_total_score);
-        tv_word_formed = findViewById(R.id.tv_word_formed);
-        tl_game_grid = findViewById(R.id.tl_game_grid);
+    private void init() {
         letterDiceGenerator = new LetterDiceGenerator(this);
         letterDiceGrid = new ArrayList<>();
         memoizeWordResults = new HashMap<>();
         player = new Player((int) POWER_UP_THRESHOLD);
         selectedLetterDice = new ArrayList<>();
         scoreSystem = new ScoreSystem(DIMENSIONS);
+
+        mSensorListener = new SensorEventListener() {
+
+            public void onSensorChanged(SensorEvent se) {
+                float x = se.values[0];
+                float y = se.values[1];
+                float z = se.values[2];
+                mAccelLast = mAccelCurrent;
+                mAccelCurrent = (float) Math.sqrt((double) (x * x + y * y + z * z));
+                float delta = mAccelCurrent - mAccelLast;
+                mAccel = mAccel * 0.9f + delta; // perform low-cut filter
+
+                // if (mAccel > 12) {
+                if (mAccel > 1) {
+                    if (player.getPowerUpAvailable()) {
+                        ll_game_top.setBackground(getDrawable(R.drawable.activity_game_top_background_power_up));
+
+                        rl_game.setPadding(30, 30, 30, 30);
+                        rl_game.setBackground(getDrawable(R.drawable.powerup_border));
+
+                        ll_game_top.setPadding(20, 0, 20, 50);
+
+                        ll_game_bottom.setPadding(20, 30, 20, 0);
+
+                        tl_game_grid.removeAllViews();
+                        generateGameBoard();
+
+                        scoreSystem.setScoreMultiplier(20);
+                        cdtTimer.pause();
+
+                        player.activatePowerUp();
+                        updatePowerUpStatus();
+
+                        cdtPowerUp = new CountDownTimer(POWER_UP_MILLISECONDS, 1000) {
+                            @Override
+                            public void onTick(long millisUntilFinished) {
+                                powerUpTimer++;
+                                pb_power_up.setProgress(powerUpTimer * 100 / (10000 / 1000));
+                            }
+
+                            @Override
+                            public void onFinish() {
+                                ll_game_top.setBackground(getDrawable(R.drawable.activity_game_top_background));
+
+                                rl_game.setPadding(0, 0, 0, 0);
+
+                                ll_game_top.setPadding(50, 30, 50, 50);
+
+                                ll_game_bottom.setPadding(50, 30, 50, 30);
+
+                                scoreSystem.setScoreMultiplier(5);
+                                cdtTimer.resume();
+
+                                player.setPowerUpActive(false);
+                                powerUpTimer = 0;
+
+                                pb_power_up.setProgress(100);
+                            }
+                        }.start();
+                    }
+                }
+            }
+
+            @Override
+            public void onAccuracyChanged(Sensor sensor, int accuracy) {
+            }
+        };
+    }
+
+    private void initLayout() {
+        Button btn_new_game = findViewById(R.id.btn_new_game);
+        Button btn_exit_game_activity = findViewById(R.id.btn_exit_game_activity);
+        ll_game_bottom = findViewById(R.id.ll_game_bottom);
+        ll_game_top = findViewById(R.id.ll_game_top);
+        pb_left_wing = findViewById(R.id.pb_left_wing);
+        pb_right_wing = findViewById(R.id.pb_right_wing);
+        pb_power_up = findViewById(R.id.pb_power_up);
+        rl_game = findViewById(R.id.rl_game);
+        tv_score_formed = findViewById(R.id.tv_score_formed);
+        tv_total_score = findViewById(R.id.tv_total_score);
+        tv_word_formed = findViewById(R.id.tv_word_formed);
+        tl_game_grid = findViewById(R.id.tl_game_grid);
 
         btn_new_game.setOnClickListener(view -> {
             Intent i = new Intent(view.getContext(), GameActivity.class);
@@ -231,17 +251,11 @@ public class GameActivity extends AppCompatActivity {
         timer = 0;
         powerUpTimer = 0;
 
-        this.pb_left_wing = findViewById(R.id.pb_left_wing);
-        this.pb_right_wing = findViewById(R.id.pb_right_wing);
-        this.pb_power_up = findViewById(R.id.pb_power_up);
-
         this.pb_left_wing.setProgress(timer);
         this.pb_right_wing.setProgress(timer);
         updatePowerUpStatus();
 
         Intent i = new Intent(this, GameOverActivity.class);
-
-        int GAME_TIME_MILLISECONDS = 180000;
 
         cdtTimer = new CountDownTimer(GAME_TIME_MILLISECONDS, 1000) {
             @Override
@@ -260,8 +274,8 @@ public class GameActivity extends AppCompatActivity {
 
                 i.putExtra(getResources().getString(R.string.key_final_score), player.getScore());
 
-                startActivity(i);
                 finish();
+                startActivity(i);
             }
         };
     }
@@ -315,12 +329,6 @@ public class GameActivity extends AppCompatActivity {
 
             tl_game_grid.addView(tableRow);
         }
-
-//        for (int row = 0; row < letterDiceGrid.size(); row++) {
-//            TableRowSweepAnimation tableRowSweepAnimation = new TableRowSweepAnimation(this);
-//            tableRowSweepAnimation.bringToFront();
-//            tl_game_grid.addView(tableRowSweepAnimation);
-//        }
 
         tl_game_grid.setOnTouchListener((v, event) -> {
 
