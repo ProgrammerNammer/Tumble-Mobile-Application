@@ -25,7 +25,6 @@ import android.widget.RelativeLayout;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -62,7 +61,8 @@ public class GameActivity extends AppCompatActivity {
     private ArrayList<View> selectedLetterDice;
     private ArrayList<ArrayList<LetterDie>> letterDiceGrid;
     private CountDownTimer cdtTimer;
-    private CountDownTimer textFadeEffect;
+    private CountDownTimer cdtPowerUp;
+    private CountDownTimer cdtTextFadeEffect;
     private LetterDiceGenerator letterDiceGenerator;
     private Map<String, Boolean> memoizeWordResults;
     private Player player;
@@ -120,6 +120,26 @@ public class GameActivity extends AppCompatActivity {
 
                     player.activatePowerUp();
                     updatePowerUpStatus();
+
+                    cdtPowerUp = new CountDownTimer(10000, 1000) {
+                        @Override
+                        public void onTick(long millisUntilFinished) {
+                        }
+
+                        @Override
+                        public void onFinish() {
+                            LinearLayout ll_game_top = findViewById(R.id.ll_game_top);
+                            ll_game_top.setBackground(getDrawable(R.drawable.activity_game_top_background));
+
+                            RelativeLayout rl_game = findViewById(R.id.rl_game);
+                            rl_game.setPadding(0, 0, 0, 0);
+
+                            ll_game_top.setPadding(50, 30, 50, 50);
+
+                            LinearLayout ll_game_bottom = findViewById(R.id.ll_game_bottom);
+                            ll_game_bottom.setPadding(50, 30, 50, 30);
+                        }
+                    }.start();
                 }
             }
         }
@@ -275,11 +295,11 @@ public class GameActivity extends AppCompatActivity {
                 case MotionEvent.ACTION_MOVE:
                 case MotionEvent.ACTION_DOWN:
                 case MotionEvent.ACTION_POINTER_DOWN: {
-                    if (textFadeEffect != null) {
+                    if (cdtTextFadeEffect != null) {
                         tv_word_formed.setText("");
                         tv_score_formed.setText("");
-                        textFadeEffect.cancel();
-                        textFadeEffect = null;
+                        cdtTextFadeEffect.cancel();
+                        cdtTextFadeEffect = null;
                     }
 
                     handleDiceSelect((int) event.getRawX(), (int) event.getRawY());
@@ -331,7 +351,7 @@ public class GameActivity extends AppCompatActivity {
             tv_score_formed.setText(getResources().getString(R.string.score_status_not_a_word));
         }
 
-        textFadeEffect = new CountDownTimer(3000, 1000) {
+        cdtTextFadeEffect = new CountDownTimer(3000, 1000) {
             @Override
             public void onTick(long millisUntilFinished) {
 
