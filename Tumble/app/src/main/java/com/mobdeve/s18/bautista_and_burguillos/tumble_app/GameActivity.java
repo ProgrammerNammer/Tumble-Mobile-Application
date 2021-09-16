@@ -1,11 +1,9 @@
 package com.mobdeve.s18.bautista_and_burguillos.tumble_app;
 
 import android.annotation.SuppressLint;
-
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Rect;
-
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -46,8 +44,11 @@ import javax.net.ssl.HttpsURLConnection;
 
 
 public class GameActivity extends AppCompatActivity {
+    private final double POWER_UP_THRESHOLD = 2500;
+    private final int DIMENSIONS = 4;
+    private final int GAME_TIME_MILLISECONDS = 180000;
+    private final int POWER_UP_MILLISECONDS = 10000;
     private SensorManager mSensorManager;
-
     private LinearLayout ll_game_bottom;
     private LinearLayout ll_game_top;
     private ProgressBar pb_left_wing;
@@ -58,9 +59,10 @@ public class GameActivity extends AppCompatActivity {
     private TextView tv_score_formed;
     private TextView tv_total_score;
     private TextView tv_word_formed;
-
     private ArrayList<View> selectedLetterDice;
     private ArrayList<ArrayList<LetterDie>> letterDiceGrid;
+    private Button btn_exit_game_activity;
+    private Button btn_new_game;
     private CountDownTimer cdtTimer;
     private CountDownTimer cdtPowerUp;
     private CountDownTimer cdtTextFadeEffect;
@@ -69,10 +71,6 @@ public class GameActivity extends AppCompatActivity {
     private Player player;
     private SensorEventListener mSensorListener;
     private ScoreSystem scoreSystem;
-    private final double POWER_UP_THRESHOLD = 2500;
-    private final int DIMENSIONS = 4;
-    private final int GAME_TIME_MILLISECONDS = 180000;
-    private final int POWER_UP_MILLISECONDS = 10000;
     private boolean hasFinishedStartingAnimation = false;
     private float mAccel; // acceleration apart from gravity
     private float mAccelCurrent; // current acceleration including gravity
@@ -152,7 +150,7 @@ public class GameActivity extends AppCompatActivity {
                 float y = se.values[1];
                 float z = se.values[2];
                 mAccelLast = mAccelCurrent;
-                mAccelCurrent = (float) Math.sqrt((double) (x * x + y * y + z * z));
+                mAccelCurrent = (float) Math.sqrt(x * x + y * y + z * z);
                 float delta = mAccelCurrent - mAccelLast;
                 mAccel = mAccel * 0.9f + delta; // perform low-cut filter
 
@@ -214,8 +212,8 @@ public class GameActivity extends AppCompatActivity {
     }
 
     private void initLayout() {
-        Button btn_new_game = findViewById(R.id.btn_new_game);
-        Button btn_exit_game_activity = findViewById(R.id.btn_exit_game_activity);
+        btn_new_game = findViewById(R.id.btn_new_game);
+        btn_exit_game_activity = findViewById(R.id.btn_exit_game_activity);
         ll_game_bottom = findViewById(R.id.ll_game_bottom);
         ll_game_top = findViewById(R.id.ll_game_top);
         pb_left_wing = findViewById(R.id.pb_left_wing);
@@ -296,34 +294,26 @@ public class GameActivity extends AppCompatActivity {
         //  First generate the letter dice
         letterDiceGrid = letterDiceGenerator.generateTileGrid(DIMENSIONS);
 
-        //  Now, render the board's contents
-        for (int row = 0; row < letterDiceGrid.size(); row++) {
-            LetterDieAdapter letterDieAdapter = new LetterDieAdapter(this, R.layout.letter_die_item, letterDiceGrid.get(row));
-            LinearLayout tableRow = new LinearLayout(this);
+        TableRowSweepAnimation tableRowSweepAnimation = new TableRowSweepAnimation(this);
+        tl_game_grid.addView(tableRowSweepAnimation);
 
-            tableRow.post(
-                    () -> {
-                        TableRow.LayoutParams layoutParams = new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.WRAP_CONTENT, 1f);
-                        tableRow.setLayoutParams(layoutParams);
-                        tableRow.setGravity(Gravity.CENTER);
-                        tableRow.setWeightSum(DIMENSIONS);
-                    }
-            );
+        new CountDownTimer(2000, 1000) {
+            @Override
+            public void onTick(long millisUntilFinished) {
 
-            TableRowSweepAnimation tableRowSweepAnimation = new TableRowSweepAnimation(this);
-            tableRowSweepAnimation.bringToFront();
+            }
 
-            new CountDownTimer(3000, 1000) {
-                @Override
-                public void onTick(long millisUntilFinished) {
+            @Override
+            public void onFinish() {
+                if (!hasFinishedStartingAnimation) {
+                    tl_game_grid.removeAllViews();
+                    hasFinishedStartingAnimation = true;
                 }
 
-                @Override
-                public void onFinish() {
-                    if (!hasFinishedStartingAnimation) {
-                        tl_game_grid.removeAllViews();
-                        hasFinishedStartingAnimation = true;
-                    }
+                //  Now, render the board's contents
+                for (int row = 0; row < letterDiceGrid.size(); row++) {
+                    LetterDieAdapter letterDieAdapter = new LetterDieAdapter(getBaseContext(), R.layout.letter_die_item, letterDiceGrid.get(row));
+                    LinearLayout tableRow = new LinearLayout(getBaseContext());
 
                     tableRow.post(
                             () -> {
@@ -350,17 +340,13 @@ public class GameActivity extends AppCompatActivity {
 
                         tableRow.addView(view);
                     }
+
                     tl_game_grid.addView(tableRow);
                 }
-            }.start();
-
-            tl_game_grid.addView(tableRowSweepAnimation);
-
-            tl_game_grid.addView(tableRow);
-        }
+            }
+        }.start();
 
         tl_game_grid.setOnTouchListener((v, event) -> {
-
             switch (event.getAction()) {
                 case MotionEvent.ACTION_MOVE:
                 case MotionEvent.ACTION_DOWN:
@@ -514,6 +500,27 @@ public class GameActivity extends AppCompatActivity {
         return url + word;
     }
 
+    private void gameOver(String score) {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        Map<String, Object> user = new HashMap<>();
+        user.put("username", FirebaseAuth.getInstance().getCurrentUser().getDisplayName());
+        user.put("score", score);
+        db.collection("highscores")
+                .add(user)
+                .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                    @Override
+                    public void onSuccess(DocumentReference documentReference) {
+                        Log.d("TAG", "DocumentSnapshot added with ID: " + documentReference.getId());
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.w("TAG", "Error adding document", e);
+                    }
+                });
+    }
+
     private class CallBackTask extends AsyncTask<String, Integer, String> {
         @Override
         protected String doInBackground(String... params) {
@@ -540,26 +547,5 @@ public class GameActivity extends AppCompatActivity {
             super.onPostExecute(result);
             System.out.println("onPostExecute: " + result);
         }
-    }
-
-    private void gameOver(String score) {
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
-        Map<String, Object> user = new HashMap<>();
-        user.put("username", FirebaseAuth.getInstance().getCurrentUser().getDisplayName());
-        user.put("score", score);
-        db.collection("highscores")
-                .add(user)
-                .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
-                    @Override
-                    public void onSuccess(DocumentReference documentReference) {
-                        Log.d("TAG", "DocumentSnapshot added with ID: " + documentReference.getId());
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Log.w("TAG", "Error adding document", e);
-                    }
-                });
     }
 }
