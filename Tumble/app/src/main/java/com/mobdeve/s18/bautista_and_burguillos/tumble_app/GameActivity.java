@@ -69,10 +69,10 @@ public class GameActivity extends AppCompatActivity {
     private Player player;
     private SensorEventListener mSensorListener;
     private ScoreSystem scoreSystem;
-    private final double POWER_UP_THRESHOLD = 100;
+    private final double POWER_UP_THRESHOLD = 2500;
     private final int DIMENSIONS = 4;
-    private final int GAME_TIME_MILLISECONDS = 7000;
-    private final int POWER_UP_MILLISECONDS = 10000;
+    private final int GAME_TIME_MILLISECONDS = 10000;
+    private final int POWER_UP_MILLISECONDS = 180000;
     private float mAccel; // acceleration apart from gravity
     private float mAccelCurrent; // current acceleration including gravity
     private float mAccelLast; // last acceleration including gravity
@@ -111,15 +111,29 @@ public class GameActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onDestroy() {
-        super.onDestroy();
-
+    public void finish()
+    {
+        super.finish();
+        
         try {
             cdtTextFadeEffect.cancel();
-            cdtPowerUp.cancel();
-            cdtTimer.cancel();
+            cdtTextFadeEffect = null;
         } catch (Exception e) {
-            Log.e("CountDownTimer", "Error " + e);
+            Log.e("Error", "NPE");
+        }
+
+        try {
+            cdtPowerUp.cancel();
+            cdtPowerUp = null;
+        } catch (Exception e) {
+            Log.e("Error", "NPE");
+        }
+
+        try {
+            cdtTimer.cancel();
+            cdtTimer = null;
+        } catch (Exception e) {
+            Log.e("Error", "NPE");
         }
     }
 
@@ -260,8 +274,8 @@ public class GameActivity extends AppCompatActivity {
 
                 i.putExtra(getResources().getString(R.string.key_final_score), player.getScore());
 
-                startActivity(i);
                 finish();
+                startActivity(i);
             }
         };
     }
