@@ -71,8 +71,8 @@ public class GameActivity extends AppCompatActivity {
     private ScoreSystem scoreSystem;
     private final double POWER_UP_THRESHOLD = 2500;
     private final int DIMENSIONS = 4;
-    private final int GAME_TIME_MILLISECONDS = 10000;
-    private final int POWER_UP_MILLISECONDS = 180000;
+    private final int GAME_TIME_MILLISECONDS = 180000;
+    private final int POWER_UP_MILLISECONDS = 10000;
     private float mAccel; // acceleration apart from gravity
     private float mAccelCurrent; // current acceleration including gravity
     private float mAccelLast; // last acceleration including gravity
@@ -111,10 +111,9 @@ public class GameActivity extends AppCompatActivity {
     }
 
     @Override
-    public void finish()
-    {
+    public void finish() {
         super.finish();
-        
+
         try {
             cdtTextFadeEffect.cancel();
             cdtTextFadeEffect = null;
