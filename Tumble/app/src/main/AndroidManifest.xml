@@ -14,11 +14,7 @@
             android:name=".MainActivity"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.AppCompat.DayNight.NoActionBar">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
         <activity
             android:name=".GameActivity"
@@ -38,21 +34,26 @@
             android:theme="@style/Theme.AppCompat.DayNight.NoActionBar">
 
         </activity>
-        <!--        Temporary disabled for Development purposes-->
-        <!--        <activity   android:name=".LoginActivity"-->
-        <!--            android:screenOrientation="portrait"-->
-        <!--            android:theme="@style/Theme.AppCompat.DayNight.NoActionBar" >-->
-        <!--            <intent-filter>-->
-        <!--                <action android:name="android.intent.action.MAIN" />-->
 
-        <!--                <category android:name="android.intent.category.LAUNCHER" />-->
-        <!--            </intent-filter>-->
-        <!--        </activity>-->
-        <!--        <activity   android:name=".RegisterActivity"-->
-        <!--            android:screenOrientation="portrait"-->
-        <!--            android:theme="@style/Theme.AppCompat.DayNight.NoActionBar" >-->
+              <activity   android:name=".LoginActivity"
+                 android:screenOrientation="portrait"
+                 android:theme="@style/Theme.AppCompat.DayNight.NoActionBar" >
+                  <intent-filter>
+                      <action android:name="android.intent.action.MAIN" />
 
-        <!--        </activity>-->
+                     <category android:name="android.intent.category.LAUNCHER" />
+                   </intent-filter>
+              </activity>
+
+
+             <activity   android:name=".RegisterActivity"
+                    android:screenOrientation="portrait"
+              android:theme="@style/Theme.AppCompat.DayNight.NoActionBar">
+
+             </activity>
+
+
+
     </application>
 
     <uses-permission android:name="android.permission.INTERNET" />

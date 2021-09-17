@@ -157,6 +157,7 @@ public class GameActivity extends AppCompatActivity {
                 // if (mAccel > 12) {
                 if (mAccel > 1) {
                     if (player.getPowerUpAvailable()) {
+                        hasFinishedStartingAnimation=false;
                         ll_game_top.setBackground(getDrawable(R.drawable.activity_game_top_background_power_up));
 
                         rl_game.setPadding(30, 30, 30, 30);
@@ -167,6 +168,9 @@ public class GameActivity extends AppCompatActivity {
                         ll_game_bottom.setPadding(20, 30, 20, 0);
 
                         tl_game_grid.removeAllViews();
+                        tl_game_grid.setOnTouchListener((v, event) -> {
+                            return false;
+                        });
                         generateGameBoard();
 
                         scoreSystem.setScoreMultiplier(20);
@@ -290,7 +294,6 @@ public class GameActivity extends AppCompatActivity {
     private void generateGameBoard() {
         //  Set table's weight sum to properly scale its rows evenly
         tl_game_grid.setWeightSum(DIMENSIONS);
-
         //  First generate the letter dice
         letterDiceGrid = letterDiceGenerator.generateTileGrid(DIMENSIONS);
 
@@ -343,37 +346,38 @@ public class GameActivity extends AppCompatActivity {
 
                     tl_game_grid.addView(tableRow);
                 }
+                tl_game_grid.setOnTouchListener((v, event) -> {
+                    switch (event.getAction()) {
+                        case MotionEvent.ACTION_MOVE:
+                        case MotionEvent.ACTION_DOWN:
+                        case MotionEvent.ACTION_POINTER_DOWN: {
+                            if (cdtTextFadeEffect != null) {
+                                tv_word_formed.setText("");
+                                tv_score_formed.setText("");
+                                cdtTextFadeEffect.cancel();
+                                cdtTextFadeEffect = null;
+                            }
+
+                            handleDiceSelect((int) event.getRawX(), (int) event.getRawY());
+                        }
+                        break;
+                        case MotionEvent.ACTION_UP:
+                        case MotionEvent.ACTION_POINTER_UP:
+                        case MotionEvent.ACTION_CANCEL: {
+                            handleDiceDeselect();
+                        }
+                        break;
+                        default: {
+                            Log.d("MyTag", "" + event.getAction());
+                        }
+                    }
+
+                    return true;
+                });
             }
         }.start();
 
-        tl_game_grid.setOnTouchListener((v, event) -> {
-            switch (event.getAction()) {
-                case MotionEvent.ACTION_MOVE:
-                case MotionEvent.ACTION_DOWN:
-                case MotionEvent.ACTION_POINTER_DOWN: {
-                    if (cdtTextFadeEffect != null) {
-                        tv_word_formed.setText("");
-                        tv_score_formed.setText("");
-                        cdtTextFadeEffect.cancel();
-                        cdtTextFadeEffect = null;
-                    }
 
-                    handleDiceSelect((int) event.getRawX(), (int) event.getRawY());
-                }
-                break;
-                case MotionEvent.ACTION_UP:
-                case MotionEvent.ACTION_POINTER_UP:
-                case MotionEvent.ACTION_CANCEL: {
-                    handleDiceDeselect();
-                }
-                break;
-                default: {
-                    Log.d("MyTag", "" + event.getAction());
-                }
-            }
-
-            return true;
-        });
     }
 
     private void handleDiceDeselect() {
@@ -504,7 +508,8 @@ public class GameActivity extends AppCompatActivity {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         Map<String, Object> user = new HashMap<>();
         user.put("username", FirebaseAuth.getInstance().getCurrentUser().getDisplayName());
-        user.put("score", score);
+        user.put("score", Integer.valueOf(score));
+
         db.collection("highscores")
                 .add(user)
                 .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {

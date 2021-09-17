@@ -50,15 +50,16 @@ public class RegisterActivity extends AppCompatActivity {
         mStore = FirebaseFirestore.getInstance();
 
 
-        if (mAuth.getCurrentUser() != null) {
-            startActivity(new Intent(getApplicationContext(), MainActivity.class));
-            finish();
-        }
+
 
         mRegisterBtn.setOnClickListener(v -> {
             final String email = mEmail.getText().toString().trim();
             String password = mPassword.getText().toString().trim();
             final String Username = mUsername.getText().toString();
+            if (TextUtils.isEmpty(Username)) {
+                mEmail.setError("Username is Required.");
+                return;
+            }
 
             if (TextUtils.isEmpty(email)) {
                 mEmail.setError("Email is Required.");
@@ -106,7 +107,7 @@ public class RegisterActivity extends AppCompatActivity {
                     startActivity(new Intent(getApplicationContext(), MainActivity.class));
 
                 } else {
-                    Toast.makeText(RegisterActivity.this, "Error ! " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(RegisterActivity.this, "Error! " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
 
                 }
             });
@@ -117,6 +118,7 @@ public class RegisterActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(getApplicationContext(), LoginActivity.class));
+                finish();
             }
         });
 

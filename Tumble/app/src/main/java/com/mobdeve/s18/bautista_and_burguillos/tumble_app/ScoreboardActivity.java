@@ -53,6 +53,7 @@ public class ScoreboardActivity extends AppCompatActivity {
     private void initBoard(){
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         FirebaseFirestore rootRef = FirebaseFirestore.getInstance();
+        scoreboardItems.clear();
         CollectionReference Ref = rootRef.collection("highscores");
         Query query = Ref.orderBy("score", Query.Direction.DESCENDING).limit(10);
 
@@ -65,7 +66,7 @@ public class ScoreboardActivity extends AppCompatActivity {
 
                     ScoreboardItem item = new ScoreboardItem(document.get("username").toString(),document.get("score").toString());
                     scoreboardItems.add(item);
-                    Log.d("TAG", item.getScore() + "kek");
+
 
                 }
                 scoreboardViewAdapter.notifyDataSetChanged();

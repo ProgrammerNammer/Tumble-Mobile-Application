@@ -77,6 +77,7 @@ public class LoginActivity extends AppCompatActivity {
         this.mCreateBtn.setOnClickListener(v -> {
             Intent i = new Intent(v.getContext(), RegisterActivity.class);
             startActivity(i);
+
         });
 
         forgotTextLink.setOnClickListener(v -> {
@@ -90,8 +91,11 @@ public class LoginActivity extends AppCompatActivity {
             passwordResetDialog.setPositiveButton("Yes", (dialog, which) -> {
                 // extract the email and send reset link
                 String mail = resetMail.getText().toString();
-                mAuth.sendPasswordResetEmail(mail).addOnSuccessListener(aVoid -> Toast.makeText(LoginActivity.this, "Reset Link Sent To Your Email.", Toast.LENGTH_SHORT).show()).addOnFailureListener(e -> Toast.makeText(LoginActivity.this, "Error ! Reset Link is Not Sent" + e.getMessage(), Toast.LENGTH_SHORT).show());
-
+                if(!mail.isEmpty())
+                 mAuth.sendPasswordResetEmail(mail).addOnSuccessListener(aVoid -> Toast.makeText(LoginActivity.this, "Reset Link Sent To Your Email.", Toast.LENGTH_SHORT).show()).addOnFailureListener(e -> Toast.makeText(LoginActivity.this, "Error! Reset Link is Not Sent. " + e.getMessage(), Toast.LENGTH_LONG).show());
+                else{
+                    Toast.makeText(LoginActivity.this, "INVALID INPUT", Toast.LENGTH_SHORT).show();
+                }
             });
 
             passwordResetDialog.setNegativeButton("No", (dialog, which) -> {
