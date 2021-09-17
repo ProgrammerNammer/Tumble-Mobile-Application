@@ -46,11 +46,15 @@ import javax.net.ssl.HttpsURLConnection;
 public class GameActivity extends AppCompatActivity {
     private final double POWER_UP_THRESHOLD = 2500;
     private final int DIMENSIONS = 4;
+    private final int ANIMATE_BOARD_MILLISECONDS = 2000;
+    private final int FREEZE_SCREEN_MILLISECONDS = 4000;
     private final int GAME_TIME_MILLISECONDS = 180000;
     private final int POWER_UP_MILLISECONDS = 10000;
     private final int TUMBLE_FIRE_MILLISECONDS = 3000;
+    private final int WORD_FADE_MILLISECONDS = 3000;
     private SensorManager mSensorManager;
     private LinearLayout ll_game_bottom;
+    private LinearLayout ll_game_over;
     private LinearLayout ll_game_top;
     private LinearLayout ll_tumble_down;
     private ProgressBar pb_left_wing;
@@ -58,6 +62,7 @@ public class GameActivity extends AppCompatActivity {
     private ProgressBar pb_power_up;
     private RelativeLayout rl_game;
     private TableLayout tl_game_grid;
+    private TextView tv_final_score;
     private TextView tv_score_formed;
     private TextView tv_total_score;
     private TextView tv_word_formed;
@@ -156,7 +161,6 @@ public class GameActivity extends AppCompatActivity {
                 float delta = mAccelCurrent - mAccelLast;
                 mAccel = mAccel * 0.9f + delta; // perform low-cut filter
 
-                // if (mAccel > 12) {
                 if (mAccel > 1) {
                     if (player.getPowerUpAvailable()) {
                         hasFinishedStartingAnimation = false;
@@ -235,12 +239,14 @@ public class GameActivity extends AppCompatActivity {
         btn_new_game = findViewById(R.id.btn_new_game);
         btn_exit_game_activity = findViewById(R.id.btn_exit_game_activity);
         ll_game_bottom = findViewById(R.id.ll_game_bottom);
+        ll_game_over = findViewById(R.id.ll_game_over);
         ll_game_top = findViewById(R.id.ll_game_top);
         ll_tumble_down = findViewById(R.id.ll_tumble_down);
         pb_left_wing = findViewById(R.id.pb_left_wing);
         pb_right_wing = findViewById(R.id.pb_right_wing);
         pb_power_up = findViewById(R.id.pb_power_up);
         rl_game = findViewById(R.id.rl_game);
+        tv_final_score = findViewById(R.id.tv_final_score);
         tv_score_formed = findViewById(R.id.tv_score_formed);
         tv_total_score = findViewById(R.id.tv_total_score);
         tv_word_formed = findViewById(R.id.tv_word_formed);
@@ -277,8 +283,6 @@ public class GameActivity extends AppCompatActivity {
         this.pb_right_wing.setProgress(timer);
         updatePowerUpStatus();
 
-        Intent i = new Intent(this, GameOverActivity.class);
-
         cdtTimer = new CountDownTimer(GAME_TIME_MILLISECONDS, 1000) {
             @Override
             public void onTick(long millisUntilFinished) {
@@ -294,10 +298,30 @@ public class GameActivity extends AppCompatActivity {
                 pb_left_wing.setProgress(100);
                 pb_right_wing.setProgress(100);
 
-                i.putExtra(getResources().getString(R.string.key_final_score), player.getScore());
-                gameOver(Integer.toString(player.getScore()));
-                finish();
-                startActivity(i);
+                ll_game_over.setVisibility(View.VISIBLE);
+                ll_game_over.setOnClickListener(view -> {
+                });
+
+                tv_final_score.setText(player.getScoreString());
+
+                saveScoreToDB(Integer.toString(player.getScore()));
+
+                new CountDownTimer(FREEZE_SCREEN_MILLISECONDS, 1000){
+                    @Override
+                    public void onTick(long millisUntilFinished) {
+
+                    }
+
+                    @Override
+                    public void onFinish() {
+                        ll_game_over.setOnClickListener(view -> {
+                            Intent i = new Intent(view.getContext(), MainActivity.class);
+
+                            finish();
+                            startActivity(i);
+                        });
+                    }
+                }.start();
             }
         };
     }
@@ -320,7 +344,7 @@ public class GameActivity extends AppCompatActivity {
         TableRowSweepAnimation tableRowSweepAnimation = new TableRowSweepAnimation(this);
         tl_game_grid.addView(tableRowSweepAnimation);
 
-        new CountDownTimer(2000, 1000) {
+        new CountDownTimer(ANIMATE_BOARD_MILLISECONDS, 1000) {
             @Override
             public void onTick(long millisUntilFinished) {
 
@@ -431,7 +455,7 @@ public class GameActivity extends AppCompatActivity {
             tv_score_formed.setText(getResources().getString(R.string.score_status_not_a_word));
         }
 
-        cdtTextFadeEffect = new CountDownTimer(3000, 1000) {
+        cdtTextFadeEffect = new CountDownTimer(WORD_FADE_MILLISECONDS, 1000) {
             @Override
             public void onTick(long millisUntilFinished) {
 
@@ -524,7 +548,7 @@ public class GameActivity extends AppCompatActivity {
         return url + word;
     }
 
-    private void gameOver(String score) {
+    private void saveScoreToDB(String score) {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         Map<String, Object> user = new HashMap<>();
         user.put("username", FirebaseAuth.getInstance().getCurrentUser().getDisplayName());

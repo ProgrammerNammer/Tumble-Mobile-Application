@@ -199,4 +199,35 @@
 
     </LinearLayout>
 
+    <LinearLayout
+        android:id="@+id/ll_game_over"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#EE000000"
+        android:gravity="center_vertical"
+        android:orientation="vertical"
+        android:visibility="gone">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="@string/game_over"
+            android:textAllCaps="true"
+            android:textColor="@color/white"
+            android:textSize="125sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/tv_final_score"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="@string/score_final"
+            android:textColor="@color/white"
+            android:textSize="50sp"
+            android:textStyle="bold" />
+
+    </LinearLayout>
+
 </FrameLayout>
