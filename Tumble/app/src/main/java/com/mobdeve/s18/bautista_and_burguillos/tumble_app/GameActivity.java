@@ -48,9 +48,11 @@ public class GameActivity extends AppCompatActivity {
     private final int DIMENSIONS = 4;
     private final int GAME_TIME_MILLISECONDS = 180000;
     private final int POWER_UP_MILLISECONDS = 10000;
+    private final int TUMBLE_FIRE_MILLISECONDS = 3000;
     private SensorManager mSensorManager;
     private LinearLayout ll_game_bottom;
     private LinearLayout ll_game_top;
+    private LinearLayout ll_tumble_down;
     private ProgressBar pb_left_wing;
     private ProgressBar pb_right_wing;
     private ProgressBar pb_power_up;
@@ -157,7 +159,7 @@ public class GameActivity extends AppCompatActivity {
                 // if (mAccel > 12) {
                 if (mAccel > 1) {
                     if (player.getPowerUpAvailable()) {
-                        hasFinishedStartingAnimation=false;
+                        hasFinishedStartingAnimation = false;
                         ll_game_top.setBackground(getDrawable(R.drawable.activity_game_top_background_power_up));
 
                         rl_game.setPadding(30, 30, 30, 30);
@@ -171,6 +173,7 @@ public class GameActivity extends AppCompatActivity {
                         tl_game_grid.setOnTouchListener((v, event) -> {
                             return false;
                         });
+
                         generateGameBoard();
 
                         scoreSystem.setScoreMultiplier(20);
@@ -179,30 +182,43 @@ public class GameActivity extends AppCompatActivity {
                         player.activatePowerUp();
                         updatePowerUpStatus();
 
-                        cdtPowerUp = new CountDownTimer(POWER_UP_MILLISECONDS, 1000) {
+                        ll_tumble_down.setVisibility(View.VISIBLE);
+                        new CountDownTimer(TUMBLE_FIRE_MILLISECONDS, 1000) {
                             @Override
                             public void onTick(long millisUntilFinished) {
-                                powerUpTimer++;
-                                pb_power_up.setProgress(powerUpTimer * 100 / (10000 / 1000));
+
                             }
 
                             @Override
                             public void onFinish() {
-                                ll_game_top.setBackground(getDrawable(R.drawable.activity_game_top_background));
+                                ll_tumble_down.setVisibility(View.GONE);
 
-                                rl_game.setPadding(0, 0, 0, 0);
+                                cdtPowerUp = new CountDownTimer(POWER_UP_MILLISECONDS, 1000) {
+                                    @Override
+                                    public void onTick(long millisUntilFinished) {
+                                        powerUpTimer++;
+                                        pb_power_up.setProgress(powerUpTimer * 100 / (10000 / 1000));
+                                    }
 
-                                ll_game_top.setPadding(50, 30, 50, 50);
+                                    @Override
+                                    public void onFinish() {
+                                        ll_game_top.setBackground(getDrawable(R.drawable.activity_game_top_background));
 
-                                ll_game_bottom.setPadding(50, 30, 50, 30);
+                                        rl_game.setPadding(0, 0, 0, 0);
 
-                                scoreSystem.setScoreMultiplier(5);
-                                cdtTimer.resume();
+                                        ll_game_top.setPadding(50, 30, 50, 50);
 
-                                player.setPowerUpActive(false);
-                                powerUpTimer = 0;
+                                        ll_game_bottom.setPadding(50, 30, 50, 30);
 
-                                pb_power_up.setProgress(100);
+                                        scoreSystem.setScoreMultiplier(5);
+                                        cdtTimer.resume();
+
+                                        player.setPowerUpActive(false);
+                                        powerUpTimer = 0;
+
+                                        pb_power_up.setProgress(100);
+                                    }
+                                }.start();
                             }
                         }.start();
                     }
@@ -220,6 +236,7 @@ public class GameActivity extends AppCompatActivity {
         btn_exit_game_activity = findViewById(R.id.btn_exit_game_activity);
         ll_game_bottom = findViewById(R.id.ll_game_bottom);
         ll_game_top = findViewById(R.id.ll_game_top);
+        ll_tumble_down = findViewById(R.id.ll_tumble_down);
         pb_left_wing = findViewById(R.id.pb_left_wing);
         pb_right_wing = findViewById(R.id.pb_right_wing);
         pb_power_up = findViewById(R.id.pb_power_up);
@@ -241,6 +258,9 @@ public class GameActivity extends AppCompatActivity {
 
             finish();
             startActivity(i);
+        });
+
+        ll_tumble_down.setOnClickListener(view -> {
         });
 
         //   Setting default value

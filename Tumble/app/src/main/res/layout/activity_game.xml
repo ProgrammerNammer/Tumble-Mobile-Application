@@ -1,166 +1,202 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/rl_game"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:layout_height="match_parent">
 
-    <LinearLayout
-        android:id="@+id/ll_game_top"
+    <RelativeLayout xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/rl_game"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/cl_game_middle"
-        android:layout_alignParentTop="true"
-        android:background="@drawable/activity_game_top_background"
-        android:orientation="vertical"
-        android:paddingHorizontal="50px"
-        android:paddingTop="30px"
-        android:paddingBottom="50px">
-
-        <TextView
-            android:id="@+id/tv_total_score"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:maxLines="1"
-            android:text="@string/total_score"
-            android:textAllCaps="true"
-            android:textColor="@color/white"
-            android:textSize="24pt" />
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
         <LinearLayout
+            android:id="@+id/ll_game_top"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:layout_marginBottom="10dp"
-            android:gravity="center"
-            android:orientation="horizontal">
+            android:layout_above="@+id/cl_game_middle"
+            android:layout_alignParentTop="true"
+            android:background="@drawable/activity_game_top_background"
+            android:orientation="vertical"
+            android:paddingHorizontal="50px"
+            android:paddingTop="30px"
+            android:paddingBottom="50px">
 
-            <ProgressBar
-                android:id="@+id/pb_left_wing"
-                style="@android:style/Widget.Material.ProgressBar.Horizontal"
-                android:layout_width="wrap_content"
+            <TextView
+                android:id="@+id/tv_total_score"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight=".5"
-                android:max="100"
-                android:progress="0"
-                android:progressDrawable="@drawable/timer_game_time"
-                android:scaleY="3" />
+                android:gravity="center"
+                android:maxLines="1"
+                android:text="@string/total_score"
+                android:textAllCaps="true"
+                android:textColor="@color/white"
+                android:textSize="24pt" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
+                android:gravity="center"
+                android:orientation="horizontal">
+
+                <ProgressBar
+                    android:id="@+id/pb_left_wing"
+                    style="@android:style/Widget.Material.ProgressBar.Horizontal"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight=".5"
+                    android:max="100"
+                    android:progress="0"
+                    android:progressDrawable="@drawable/timer_game_time"
+                    android:scaleY="3" />
+
+                <ProgressBar
+                    android:id="@+id/pb_right_wing"
+                    style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight=".5"
+                    android:max="100"
+                    android:progress="0"
+                    android:progressDrawable="@drawable/timer_game_time"
+                    android:rotation="180"
+                    android:scaleY="3" />
+
+            </LinearLayout>
 
             <ProgressBar
-                android:id="@+id/pb_right_wing"
+                android:id="@+id/pb_power_up"
                 style="@style/Widget.AppCompat.ProgressBar.Horizontal"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight=".5"
+                android:layout_width="match_parent"
+                android:layout_height="3dp"
+                android:layout_marginBottom="20dp"
                 android:max="100"
-                android:progress="0"
-                android:progressDrawable="@drawable/timer_game_time"
+                android:progressDrawable="@drawable/power_up_bar"
                 android:rotation="180"
                 android:scaleY="3" />
 
+            <TableLayout
+                android:id="@+id/tl_game_grid"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/game_board"
+                android:gravity="center_vertical"
+                android:padding="5dp"
+                android:weightSum="5" />
+
         </LinearLayout>
 
-        <ProgressBar
-            android:id="@+id/pb_power_up"
-            style="@style/Widget.AppCompat.ProgressBar.Horizontal"
-            android:layout_width="match_parent"
-            android:layout_height="3dp"
-            android:layout_marginBottom="20dp"
-            android:max="100"
-            android:progressDrawable="@drawable/power_up_bar"
-            android:rotation="180"
-            android:scaleY="3" />
-
-        <TableLayout
-            android:id="@+id/tl_game_grid"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@drawable/game_board"
-            android:gravity="center_vertical"
-            android:padding="5dp"
-            android:weightSum="5" />
-
-    </LinearLayout>
-
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/cl_game_middle"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_above="@id/ll_game_bottom"
-        android:background="@drawable/activity_game_middle_background"
-        android:paddingVertical="25dp">
-
-        <TextView
-            android:id="@+id/tv_word_formed"
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/cl_game_middle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center"
-            android:maxLines="1"
-            android:text="@string/word_formed"
-            android:textAllCaps="true"
-            android:textColor="@color/white"
-            android:textSize="16pt"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            android:layout_above="@id/ll_game_bottom"
+            android:background="@drawable/activity_game_middle_background"
+            android:paddingVertical="25dp">
 
-        <TextView
-            android:id="@+id/tv_score_formed"
+            <TextView
+                android:id="@+id/tv_word_formed"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:maxLines="1"
+                android:text="@string/word_formed"
+                android:textAllCaps="true"
+                android:textColor="@color/white"
+                android:textSize="16pt"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/tv_score_formed"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:maxLines="1"
+                android:text="@string/score_of_word_formed"
+                android:textColor="@color/white"
+                android:textSize="10pt"
+                app:layout_constraintTop_toBottomOf="@+id/tv_word_formed" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <LinearLayout
+            android:id="@+id/ll_game_bottom"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center"
-            android:maxLines="1"
-            android:text="@string/score_of_word_formed"
-            android:textColor="@color/white"
-            android:textSize="10pt"
-            app:layout_constraintTop_toBottomOf="@+id/tv_word_formed" />
+            android:layout_alignParentBottom="true"
+            android:background="@drawable/activity_game_bottom_background"
+            android:gravity="bottom"
+            android:orientation="horizontal"
+            android:paddingHorizontal="50px"
+            android:paddingVertical="30px"
+            android:weightSum="10">
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btn_exit_game_activity"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="10dp"
+                android:layout_weight="1"
+                android:background="@drawable/button_warning_logic"
+                android:fontFamily="@font/lato"
+                android:paddingTop="15dp"
+                android:paddingBottom="25dp"
+                android:text="Exit"
+                android:textAllCaps="false"
+                android:textColor="@color/white"
+                android:textSize="10pt" />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btn_new_game"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="9"
+                android:background="@drawable/button_white_logic"
+                android:fontFamily="@font/lato"
+                android:paddingTop="15dp"
+                android:paddingBottom="25dp"
+                android:text="@string/new_game"
+                android:textAllCaps="false"
+                android:textFontWeight="600"
+                android:textSize="10pt" />
+
+        </LinearLayout>
+
+    </RelativeLayout>
 
     <LinearLayout
-        android:id="@+id/ll_game_bottom"
+        android:id="@+id/ll_tumble_down"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:background="@drawable/activity_game_bottom_background"
-        android:gravity="bottom"
-        android:orientation="horizontal"
-        android:paddingVertical="30px"
-        android:paddingHorizontal="50px"
-        android:weightSum="10">
+        android:layout_height="match_parent"
+        android:background="#EE000000"
+        android:gravity="center_vertical"
+        android:orientation="vertical"
+        android:visibility="gone">
 
-        <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/btn_exit_game_activity"
-            android:layout_width="wrap_content"
+        <TextView
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginRight="10dp"
-            android:layout_weight="1"
-            android:background="@drawable/button_warning_logic"
             android:fontFamily="@font/lato"
-            android:paddingTop="15dp"
-            android:paddingBottom="25dp"
-            android:text="Exit"
-            android:textAllCaps="false"
-            android:textColor="@color/white"
-            android:textSize="10pt" />
+            android:gravity="center"
+            android:text="Tumble"
+            android:textAllCaps="true"
+            android:textColor="#70BAFF"
+            android:textSize="80sp" />
 
-        <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/btn_new_game"
-            android:layout_width="wrap_content"
+        <TextView
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="9"
-            android:background="@drawable/button_white_logic"
             android:fontFamily="@font/lato"
-            android:paddingTop="15dp"
-            android:paddingBottom="25dp"
-            android:text="@string/new_game"
-            android:textAllCaps="false"
-            android:textFontWeight="600"
-            android:textSize="10pt" />
+            android:gravity="center"
+            android:text="Fire"
+            android:textAllCaps="true"
+            android:textColor="#F04646"
+            android:textSize="150sp" />
 
     </LinearLayout>
 
-</RelativeLayout>
+</FrameLayout>
