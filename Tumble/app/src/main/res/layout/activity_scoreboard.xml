@@ -39,6 +39,7 @@
             android:paddingBottom="30dp"
             android:text="@string/main_menu"
             android:textAllCaps="false"
+            android:textColor="#000000"
             android:textFontWeight="600"
             android:textSize="12pt" />
 

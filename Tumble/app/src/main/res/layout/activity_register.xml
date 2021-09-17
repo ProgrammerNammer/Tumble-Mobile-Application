@@ -103,6 +103,7 @@
             android:paddingBottom="20dp"
             android:text="@string/register"
             android:textAllCaps="false"
+            android:textColor="#000000"
             android:textFontWeight="400"
             android:textSize="10pt"
             app:layout_constraintEnd_toEndOf="parent"
