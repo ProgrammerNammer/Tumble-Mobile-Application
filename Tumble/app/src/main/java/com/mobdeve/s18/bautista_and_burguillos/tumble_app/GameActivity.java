@@ -3,6 +3,9 @@ package com.mobdeve.s18.bautista_and_burguillos.tumble_app;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
 import android.graphics.Rect;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
@@ -52,6 +55,12 @@ public class GameActivity extends AppCompatActivity {
     private final int POWER_UP_MILLISECONDS = 10000;
     private final int TUMBLE_FIRE_MILLISECONDS = 3000;
     private final int WORD_FADE_MILLISECONDS = 3000;
+    private int powerUpTimer;
+    private int timer;
+    private float mAccel; // acceleration apart from gravity
+    private float mAccelCurrent; // current acceleration including gravity
+    private float mAccelLast; // last acceleration including gravity
+    private boolean hasFinishedStartingAnimation = false;
     private SensorManager mSensorManager;
     private LinearLayout ll_game_bottom;
     private LinearLayout ll_game_over;
@@ -70,7 +79,7 @@ public class GameActivity extends AppCompatActivity {
     private ArrayList<ArrayList<LetterDie>> letterDiceGrid;
     private Button btn_exit_game_activity;
     private Button btn_new_game;
-    private CountDownTimer cdtTimer;
+    private CountDownTimer cdtGameTimer;
     private CountDownTimer cdtPowerUp;
     private CountDownTimer cdtTextFadeEffect;
     private LetterDiceGenerator letterDiceGenerator;
@@ -78,12 +87,6 @@ public class GameActivity extends AppCompatActivity {
     private Player player;
     private SensorEventListener mSensorListener;
     private ScoreSystem scoreSystem;
-    private boolean hasFinishedStartingAnimation = false;
-    private float mAccel; // acceleration apart from gravity
-    private float mAccelCurrent; // current acceleration including gravity
-    private float mAccelLast; // last acceleration including gravity
-    private int powerUpTimer;
-    private int timer;
 
     //  TODO: Cleanup, progress bar still going even after finish
     @Override
@@ -101,7 +104,7 @@ public class GameActivity extends AppCompatActivity {
         initTimer();
         generateGameBoard();
 
-        cdtTimer.start();
+        cdtGameTimer.start();
     }
 
     @Override
@@ -112,8 +115,8 @@ public class GameActivity extends AppCompatActivity {
 
     @Override
     protected void onPause() {
-        mSensorManager.unregisterListener(mSensorListener);
         super.onPause();
+        mSensorManager.unregisterListener(mSensorListener);
     }
 
     @Override
@@ -124,21 +127,21 @@ public class GameActivity extends AppCompatActivity {
             cdtTextFadeEffect.cancel();
             cdtTextFadeEffect = null;
         } catch (Exception e) {
-            Log.e("Error", "NPE");
+            Log.e("[Error]", "NPE - cdtTextFadeEffect");
         }
 
         try {
             cdtPowerUp.cancel();
             cdtPowerUp = null;
         } catch (Exception e) {
-            Log.e("Error", "NPE");
+            Log.e("[Error]", "NPE - cdtPowerUp");
         }
 
         try {
-            cdtTimer.cancel();
-            cdtTimer = null;
+            cdtGameTimer.cancel();
+            cdtGameTimer = null;
         } catch (Exception e) {
-            Log.e("Error", "NPE");
+            Log.e("[Error]", "NPE - cdtTimer");
         }
     }
 
@@ -147,8 +150,8 @@ public class GameActivity extends AppCompatActivity {
         letterDiceGrid = new ArrayList<>();
         memoizeWordResults = new HashMap<>();
         player = new Player((int) POWER_UP_THRESHOLD);
+        scoreSystem = new ScoreSystem();
         selectedLetterDice = new ArrayList<>();
-        scoreSystem = new ScoreSystem(DIMENSIONS);
 
         mSensorListener = new SensorEventListener() {
 
@@ -163,68 +166,7 @@ public class GameActivity extends AppCompatActivity {
 
                 if (mAccel > 1) {
                     if (player.getPowerUpAvailable()) {
-                        hasFinishedStartingAnimation = false;
-                        ll_game_top.setBackground(getDrawable(R.drawable.activity_game_top_background_power_up));
-
-                        rl_game.setPadding(30, 30, 30, 30);
-                        rl_game.setBackground(getDrawable(R.drawable.powerup_border));
-
-                        ll_game_top.setPadding(20, 0, 20, 50);
-
-                        ll_game_bottom.setPadding(20, 30, 20, 0);
-
-                        tl_game_grid.removeAllViews();
-                        tl_game_grid.setOnTouchListener((v, event) -> {
-                            return false;
-                        });
-
-                        generateGameBoard();
-
-                        scoreSystem.setScoreMultiplier(20);
-                        cdtTimer.pause();
-
-                        player.activatePowerUp();
-                        updatePowerUpStatus();
-
-                        ll_tumble_down.setVisibility(View.VISIBLE);
-                        new CountDownTimer(TUMBLE_FIRE_MILLISECONDS, 1000) {
-                            @Override
-                            public void onTick(long millisUntilFinished) {
-
-                            }
-
-                            @Override
-                            public void onFinish() {
-                                ll_tumble_down.setVisibility(View.GONE);
-
-                                cdtPowerUp = new CountDownTimer(POWER_UP_MILLISECONDS, 1000) {
-                                    @Override
-                                    public void onTick(long millisUntilFinished) {
-                                        powerUpTimer++;
-                                        pb_power_up.setProgress(powerUpTimer * 100 / (10000 / 1000));
-                                    }
-
-                                    @Override
-                                    public void onFinish() {
-                                        ll_game_top.setBackground(getDrawable(R.drawable.activity_game_top_background));
-
-                                        rl_game.setPadding(0, 0, 0, 0);
-
-                                        ll_game_top.setPadding(50, 30, 50, 50);
-
-                                        ll_game_bottom.setPadding(50, 30, 50, 30);
-
-                                        scoreSystem.setScoreMultiplier(5);
-                                        cdtTimer.resume();
-
-                                        player.setPowerUpActive(false);
-                                        powerUpTimer = 0;
-
-                                        pb_power_up.setProgress(100);
-                                    }
-                                }.start();
-                            }
-                        }.start();
+                        onPowerUpActivate();
                     }
                 }
             }
@@ -283,7 +225,7 @@ public class GameActivity extends AppCompatActivity {
         this.pb_right_wing.setProgress(timer);
         updatePowerUpStatus();
 
-        cdtTimer = new CountDownTimer(GAME_TIME_MILLISECONDS, 1000) {
+        cdtGameTimer = new CountDownTimer(GAME_TIME_MILLISECONDS, 1000) {
             @Override
             public void onTick(long millisUntilFinished) {
                 // Log.v("Time", "Tick of Progress"+ i+ millisUntilFinished);
@@ -306,7 +248,7 @@ public class GameActivity extends AppCompatActivity {
 
                 saveScoreToDB(Integer.toString(player.getScore()));
 
-                new CountDownTimer(FREEZE_SCREEN_MILLISECONDS, 1000){
+                new CountDownTimer(FREEZE_SCREEN_MILLISECONDS, 1000) {
                     @Override
                     public void onTick(long millisUntilFinished) {
 
@@ -332,6 +274,77 @@ public class GameActivity extends AppCompatActivity {
         playerProgress = playerProgress > 1 ? 1 : playerProgress < 0 ? 0 : playerProgress;
 
         pb_power_up.setProgress((int) (100 - playerProgress * 100));
+    }
+
+    @SuppressLint({"ClickableViewAccessibility", "UseCompatLoadingForDrawables"})
+    private void onPowerUpActivate() {
+        hasFinishedStartingAnimation = false;
+        ll_game_top.setBackground(getDrawable(R.drawable.activity_game_top_background_power_up));
+
+        rl_game.setPadding(30, 30, 30, 30);
+        rl_game.setBackground(getDrawable(R.drawable.powerup_border));
+
+        ll_game_top.setPadding(20, 0, 20, 50);
+
+        ll_game_bottom.setPadding(20, 30, 20, 0);
+
+        tl_game_grid.removeAllViews();
+        tl_game_grid.setOnTouchListener((v, event) -> {
+            return false;
+        });
+
+        generateGameBoard();
+
+        scoreSystem.setScoreMultiplier(20);
+        cdtGameTimer.pause();
+
+        player.activatePowerUp();
+        updatePowerUpStatus();
+
+        ll_tumble_down.setVisibility(View.VISIBLE);
+        new CountDownTimer(TUMBLE_FIRE_MILLISECONDS, 1000) {
+            @Override
+            public void onTick(long millisUntilFinished) {
+
+            }
+
+            @Override
+            public void onFinish() {
+                onPowerDeactivate();
+            }
+        }.start();
+    }
+
+    private void onPowerDeactivate() {
+        ll_tumble_down.setVisibility(View.GONE);
+
+        cdtPowerUp = new CountDownTimer(POWER_UP_MILLISECONDS, 1000) {
+            @Override
+            public void onTick(long millisUntilFinished) {
+                powerUpTimer++;
+                pb_power_up.setProgress(powerUpTimer * 100 / (10000 / 1000));
+            }
+
+            @SuppressLint("UseCompatLoadingForDrawables")
+            @Override
+            public void onFinish() {
+                ll_game_top.setBackground(getDrawable(R.drawable.activity_game_top_background));
+
+                rl_game.setPadding(0, 0, 0, 0);
+
+                ll_game_top.setPadding(50, 30, 50, 50);
+
+                ll_game_bottom.setPadding(50, 30, 50, 30);
+
+                scoreSystem.setScoreMultiplier(5);
+                cdtGameTimer.resume();
+
+                player.setPowerUpActive(false);
+                powerUpTimer = 0;
+
+                pb_power_up.setProgress(100);
+            }
+        }.start();
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -477,7 +490,11 @@ public class GameActivity extends AppCompatActivity {
         try {
             boolean result = false;
             if (memoizeWordResults.containsKey(wordFormed)) {
-                result = memoizeWordResults.get(wordFormed);
+                try {
+                    result = memoizeWordResults.get(wordFormed);
+                } catch (NullPointerException e) {
+                    e.printStackTrace();
+                }
             } else {
                 result = !task.execute(inflections(wordFormed)).get().equals("404");
                 memoizeWordResults.put(wordFormed, result);
@@ -512,6 +529,12 @@ public class GameActivity extends AppCompatActivity {
                             player.pushDiceCurrentlySelected(letterDie);
 
                             View letterDieInstance = rowChildren.getChildAt(column);
+
+                            Canvas canvas = new Canvas();
+                            Paint myPaint = new Paint();
+                            myPaint.setColor(Color.rgb(166, 235, 138));
+                            canvas.drawRect(0, 0, 100, 100, myPaint);
+
                             letterDieInstance.setBackground(getDrawable(R.drawable.letter_die_activated));
                             selectedLetterDice.add(letterDieInstance);
                         }

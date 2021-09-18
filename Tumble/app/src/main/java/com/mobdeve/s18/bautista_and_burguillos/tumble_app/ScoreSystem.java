@@ -1,18 +1,15 @@
 package com.mobdeve.s18.bautista_and_burguillos.tumble_app;
 
 public class ScoreSystem {
-    private final int DIE_LETTER_DIMENSION;
     private final double DEFAULT_SCORE_BASE;
     private double scoreMultiplier;
 
-    public ScoreSystem(int dieLetterDimension) {
-        this.DIE_LETTER_DIMENSION = dieLetterDimension;
+    public ScoreSystem() {
         this.DEFAULT_SCORE_BASE = 10;
         this.scoreMultiplier = 5;
     }
 
-    public ScoreSystem(int dieLetterDimension, double defaultScoreMultiplier, double scoreMultiplier) {
-        this.DIE_LETTER_DIMENSION = dieLetterDimension;
+    public ScoreSystem(double defaultScoreMultiplier, double scoreMultiplier) {
         this.DEFAULT_SCORE_BASE = defaultScoreMultiplier;
         this.scoreMultiplier = scoreMultiplier;
     }
