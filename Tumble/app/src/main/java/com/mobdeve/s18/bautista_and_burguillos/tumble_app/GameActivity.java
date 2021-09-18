@@ -3,10 +3,12 @@ package com.mobdeve.s18.bautista_and_burguillos.tumble_app;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
+import android.graphics.drawable.BitmapDrawable;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -443,6 +445,8 @@ public class GameActivity extends AppCompatActivity {
         tv_score_formed.setVisibility(View.VISIBLE);
 
         for (View letterDie : selectedLetterDice) {
+            View animationLoad = letterDie.findViewById(R.id.view_animation);
+            animationLoad.setBackground(null);
             letterDie.setBackground(getDrawable(R.drawable.letter_die));
         }
 
@@ -529,13 +533,21 @@ public class GameActivity extends AppCompatActivity {
                             player.pushDiceCurrentlySelected(letterDie);
 
                             View letterDieInstance = rowChildren.getChildAt(column);
-
-                            Canvas canvas = new Canvas();
-                            Paint myPaint = new Paint();
-                            myPaint.setColor(Color.rgb(166, 235, 138));
-                            canvas.drawRect(0, 0, 100, 100, myPaint);
-
                             letterDieInstance.setBackground(getDrawable(R.drawable.letter_die_activated));
+
+                            View animationLoad = letterDieInstance.findViewById(R.id.view_animation);
+
+                            final int VIEW_WIDTH = animationLoad.getWidth();
+                            final int VIEW_HEIGHT = animationLoad.getHeight();
+                            final int OFFSET = 10;
+                            Paint paint = new Paint();
+                            paint.setColor(Color.rgb(255, 255, 255));
+                            Bitmap backgroundBitmap = Bitmap.createBitmap(animationLoad.getWidth(), animationLoad.getHeight(), Bitmap.Config.ARGB_8888);
+                            Canvas canvas = new Canvas(backgroundBitmap);
+                            canvas.drawRect(OFFSET, OFFSET, VIEW_WIDTH - OFFSET, 30, paint);
+
+                            animationLoad.setBackground(new BitmapDrawable(backgroundBitmap));
+
                             selectedLetterDice.add(letterDieInstance);
                         }
 
