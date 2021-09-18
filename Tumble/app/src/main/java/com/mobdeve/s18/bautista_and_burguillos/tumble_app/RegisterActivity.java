@@ -57,7 +57,7 @@ public class RegisterActivity extends AppCompatActivity {
             String password = mPassword.getText().toString().trim();
             final String Username = mUsername.getText().toString();
             if (TextUtils.isEmpty(Username)) {
-                mEmail.setError("Username is Required.");
+                mUsername.setError("Username is Required.");
                 return;
             }
 
