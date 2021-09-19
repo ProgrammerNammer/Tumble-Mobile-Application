@@ -114,6 +114,11 @@ public class LoginActivity extends AppCompatActivity {
 
         });
     }
+    @Override
+    public void onDestroy(){
+        super.onDestroy();
+        unregisterReceiver(broadcastReceiver);
+    }
     private void installListener() {
 
 
@@ -144,6 +149,7 @@ public class LoginActivity extends AppCompatActivity {
                         mLoginBtn.setText("INTERNET NEEDED TO LOGIN");
                         mLoginBtn.setEnabled(false);
                         mCreateBtn.setEnabled(false);
+
 
 
                     }

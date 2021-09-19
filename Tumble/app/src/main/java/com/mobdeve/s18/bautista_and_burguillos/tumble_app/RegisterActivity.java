@@ -44,7 +44,7 @@ public class RegisterActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
-
+        installListener();
         mUsername = findViewById(R.id.et_username_register);
         mEmail = findViewById(R.id.et_email_register);
         mPassword = findViewById(R.id.et_password_register);
@@ -129,6 +129,11 @@ public class RegisterActivity extends AppCompatActivity {
         });
 
     }
+    @Override
+    public void onDestroy(){
+        super.onDestroy();
+        unregisterReceiver(broadcastReceiver);
+    }
     private void installListener() {
 
 
@@ -155,7 +160,7 @@ public class RegisterActivity extends AppCompatActivity {
 
 
                     } else {
-                        mRegisterBtn.setText("INTERNET NEEDED TO REGUSTER");
+                        mRegisterBtn.setText("INTERNET NEEDED TO REGISTER");
                         mRegisterBtn.setEnabled(false);
 
 
