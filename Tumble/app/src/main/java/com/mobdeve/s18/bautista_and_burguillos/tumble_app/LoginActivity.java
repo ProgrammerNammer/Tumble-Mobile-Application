@@ -1,9 +1,15 @@
 package com.mobdeve.s18.bautista_and_burguillos.tumble_app;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -25,6 +31,7 @@ public class LoginActivity extends AppCompatActivity {
     EditText mEmail, mPassword;
     Button mLoginBtn;
     TextView mCreateBtn, forgotTextLink;
+    private BroadcastReceiver broadcastReceiver;
 
     FirebaseAuth mAuth;
 
@@ -40,7 +47,7 @@ public class LoginActivity extends AppCompatActivity {
         mLoginBtn = findViewById(R.id.btn_login);
         mCreateBtn = findViewById(R.id.btn_create_a_new_account);
         forgotTextLink = findViewById(R.id.tv_forgot_password);
-
+        installListener();
         mLoginBtn.setOnClickListener(v -> {
             String email = mEmail.getText().toString().trim();
             String password = mPassword.getText().toString().trim();
@@ -74,6 +81,7 @@ public class LoginActivity extends AppCompatActivity {
 
         });
 
+
         this.mCreateBtn.setOnClickListener(v -> {
             Intent i = new Intent(v.getContext(), RegisterActivity.class);
             startActivity(i);
@@ -105,5 +113,47 @@ public class LoginActivity extends AppCompatActivity {
             passwordResetDialog.create().show();
 
         });
+    }
+    private void installListener() {
+
+
+        if (broadcastReceiver == null) {
+
+            broadcastReceiver = new BroadcastReceiver() {
+
+                @Override
+                public void onReceive(Context context, Intent intent) {
+
+                    Bundle extras = intent.getExtras();
+
+                    NetworkInfo info = (NetworkInfo) extras
+                            .getParcelable("networkInfo");
+
+                    NetworkInfo.State state = info.getState();
+                    Log.d("InternalBroadcastReceiver", info.toString() + " "
+                            + state.toString());
+
+                    if (state == NetworkInfo.State.CONNECTED) {
+                        mLoginBtn.setText("LOGIN");
+                        mCreateBtn.setText("REGISTER");
+                        mLoginBtn.setEnabled(true);
+                        mCreateBtn.setEnabled(true);
+
+
+                    } else {
+                        mLoginBtn.setText("INTERNET NEEDED TO LOGIN");
+                        mLoginBtn.setEnabled(false);
+                        mCreateBtn.setEnabled(false);
+
+
+                    }
+
+                }
+            };
+
+            final IntentFilter intentFilter = new IntentFilter();
+            intentFilter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
+            registerReceiver(broadcastReceiver, intentFilter);
+        }
     }
 }

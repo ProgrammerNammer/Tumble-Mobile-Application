@@ -1,6 +1,11 @@
 package com.mobdeve.s18.bautista_and_burguillos.tumble_app;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
@@ -26,13 +31,14 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 public class RegisterActivity extends AppCompatActivity {
     public static final String TAG = "TAG";
-    EditText mUsername, mEmail, mPassword, mPhone;
-    Button mRegisterBtn;
-    TextView mLoginBtn;
-    FirebaseAuth mAuth;
-    ProgressBar progressBar;
-    FirebaseFirestore mStore;
-    String userID;
+    private EditText mUsername, mEmail, mPassword, mPhone;
+    private Button mRegisterBtn;
+    private TextView mLoginBtn;
+    private FirebaseAuth mAuth;
+    private ProgressBar progressBar;
+    private FirebaseFirestore mStore;
+    private String userID;
+    private BroadcastReceiver broadcastReceiver;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -122,5 +128,46 @@ public class RegisterActivity extends AppCompatActivity {
             }
         });
 
+    }
+    private void installListener() {
+
+
+        if (broadcastReceiver == null) {
+
+            broadcastReceiver = new BroadcastReceiver() {
+
+                @Override
+                public void onReceive(Context context, Intent intent) {
+
+                    Bundle extras = intent.getExtras();
+
+                    NetworkInfo info = (NetworkInfo) extras
+                            .getParcelable("networkInfo");
+
+                    NetworkInfo.State state = info.getState();
+                    Log.d("InternalBroadcastReceiver", info.toString() + " "
+                            + state.toString());
+
+                    if (state == NetworkInfo.State.CONNECTED) {
+                        mRegisterBtn.setText("REGISTER");
+                        mRegisterBtn.setEnabled(true);
+
+
+
+                    } else {
+                        mRegisterBtn.setText("INTERNET NEEDED TO REGUSTER");
+                        mRegisterBtn.setEnabled(false);
+
+
+
+                    }
+
+                }
+            };
+
+            final IntentFilter intentFilter = new IntentFilter();
+            intentFilter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
+            registerReceiver(broadcastReceiver, intentFilter);
+        }
     }
 }
