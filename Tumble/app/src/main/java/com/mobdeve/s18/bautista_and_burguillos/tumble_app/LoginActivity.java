@@ -140,13 +140,14 @@ public class LoginActivity extends AppCompatActivity {
 
                     if (state == NetworkInfo.State.CONNECTED) {
                         mLoginBtn.setText("LOGIN");
-                        mCreateBtn.setText("REGISTER");
+                        mCreateBtn.setText("CREATE ACCOUNT");
                         mLoginBtn.setEnabled(true);
                         mCreateBtn.setEnabled(true);
 
 
                     } else {
                         mLoginBtn.setText("INTERNET NEEDED TO LOGIN");
+                        mCreateBtn.setText("INTERNET NEEDED TO CREATE ACCOUNT");
                         mLoginBtn.setEnabled(false);
                         mCreateBtn.setEnabled(false);
 
