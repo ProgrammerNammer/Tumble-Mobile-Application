@@ -1,8 +1,10 @@
 package com.mobdeve.s18.bautista_and_burguillos.tumble_app;
 
 import android.annotation.SuppressLint;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -13,6 +15,8 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -27,6 +31,7 @@ import android.widget.RelativeLayout;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -89,6 +94,7 @@ public class GameActivity extends AppCompatActivity {
     private Player player;
     private SensorEventListener mSensorListener;
     private ScoreSystem scoreSystem;
+    private BroadcastReceiver broadcastReceiver;
 
     //  TODO: Cleanup, progress bar still going even after finish
     @Override
@@ -100,6 +106,8 @@ public class GameActivity extends AppCompatActivity {
         mAccelCurrent = SensorManager.GRAVITY_EARTH;
         mAccelLast = SensorManager.GRAVITY_EARTH;
         mAccel = 0.00f;
+        installListener();
+
 
         init();
         initLayout();
@@ -107,6 +115,43 @@ public class GameActivity extends AppCompatActivity {
         generateGameBoard();
 
         cdtGameTimer.start();
+    }
+    private void installListener() {
+
+
+        if (broadcastReceiver == null) {
+
+            broadcastReceiver = new BroadcastReceiver() {
+
+                @Override
+                public void onReceive(Context context, Intent intent) {
+
+                    Bundle extras = intent.getExtras();
+
+                    NetworkInfo info = (NetworkInfo) extras
+                            .getParcelable("networkInfo");
+
+                    NetworkInfo.State state = info.getState();
+                    Log.d("InternalBroadcastReceiver", info.toString() + " "
+                            + state.toString());
+
+                    if (state == NetworkInfo.State.CONNECTED) {
+
+
+
+                    } else {
+                        Toast.makeText(GameActivity.this, "Internet Connectivity needed to play", Toast.LENGTH_LONG).show();
+                        finish();
+
+                    }
+
+                }
+            };
+
+            final IntentFilter intentFilter = new IntentFilter();
+            intentFilter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
+            registerReceiver(broadcastReceiver, intentFilter);
+        }
     }
 
     @Override
@@ -119,6 +164,7 @@ public class GameActivity extends AppCompatActivity {
     protected void onPause() {
         super.onPause();
         mSensorManager.unregisterListener(mSensorListener);
+        unregisterReceiver(broadcastReceiver);
     }
 
     @Override
@@ -145,6 +191,7 @@ public class GameActivity extends AppCompatActivity {
         } catch (Exception e) {
             Log.e("[Error]", "NPE - cdtTimer");
         }
+
     }
 
     private void init() {
